@@ -88,7 +88,7 @@ export default class Cart {
       for (const [product, quantity] of this.#products) {
         body += `<p>${product.getTitle()} - ${this.#dollarUS.format(
           product.getPrice()
-        )} x ${quantity} <button type="button" class="btn btn-sm btn-danger" onclick="removeFromCart(${product.getID()})">remove</button></p>`;
+        )} x ${quantity} <button type="button" class="btn btn-sm btn-danger" id="rmfromcart" product_number=${product.getID()}>remove</button></p>`;
         total += product.getPrice() * quantity;
       }
     }

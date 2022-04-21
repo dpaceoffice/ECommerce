@@ -28,8 +28,16 @@ const displayStore = (categories, products) => {
                 <p class="card-text">` +
             price +
             `</p>
-                <a class="btn btn-primary" onclick="addToCart(${product})">Add to Cart</a>
+                <a class="btn btn-primary" id="addtocart" product_number=${product}>Add to Cart</a>
             </div>
     </div></div>`;
     }
+    addController('addtocart');
+}
+
+const displayCheckout = (body, total, checkout) => {
+    document.getElementById("checkout").innerHTML = checkout
+    document.getElementById("cart-body").innerHTML = body;
+    document.getElementById("cost-label").innerHTML = total;
+    addController('rmfromcart');
 }

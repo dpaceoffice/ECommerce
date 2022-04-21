@@ -10,7 +10,10 @@ export default class Router {
         const controller = new Controller();
         router.get('/', controller.getIndex);
         router.get('/store-data', controller.getStoreFront);
-        router.get('/:id/set-cat', controller.setCat)
+        router.get('/checkout-data', controller.getCheckout);
+        router.post('/setCategory', controller.setCategory);
+        router.post('/add-product', controller.addToCart);
+        router.post('/remove-product', controller.removeFromCart);
     }
     getRouter() {
         return this.#router;

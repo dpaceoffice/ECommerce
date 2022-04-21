@@ -1,5 +1,7 @@
 const getCallbacks = () => ({
     'cat_id': sendActiveCat,
+    'addtocart': addProductToCart,
+    'rmfromcart': removeProductFromCart
 });
 const addController = function (...buttonIDs) {
     const callbacks = getCallbacks();
