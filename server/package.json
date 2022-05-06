@@ -2,16 +2,17 @@
     "name": "vibingspree",
     "version": "1.0.0",
     "description": "Backend API for storefront",
-    "author": "David",
+    "author": "David, Andy, Lisa",
     "main": "app.js",
     "type": "module",
     "scripts": {
         "start": "npm install && node app"
     },
     "dependencies": {
-        "express": "*",
+        "cors": "*",
         "dotenv": "*",
-        "shortid": "*",
-        "cors": "*"
+        "express": "*",
+        "mongoose": "^6.3.2",
+        "shortid": "*"
     }
 }
