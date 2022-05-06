@@ -68,9 +68,9 @@ export default class Store {
     this.#curCtg = 0;
 
     let cart = new Cart(0);
-    let carts = [];
-    carts.push(cart);
-    let customer = new Customer(0, "David", "Whatever", carts);
+    let cartarr = [];
+    cartarr.push(cart);
+    let customer = new Customer({ name: "David", email: "Whatever", carts: cartarr, curCart: 0 });
     this.#customer = customer;
   }
   /**
