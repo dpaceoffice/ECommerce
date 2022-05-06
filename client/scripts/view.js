@@ -12,14 +12,14 @@ const displayStore = (categories, products) => {
     for (const product in products) {
         let [img, title, desc, price] = products[product];
         document.getElementById("products-container").innerHTML +=
-            `<div class="col"><div class="card mb-1" style="width: 18rem;">
+            `<div class="col"><div class="card mb-3" style="filter: drop-shadow(7px 7px 0px #597658); width: 18rem; border-width: thick; border-style: solid; border-color: #709a71;">
         <img class="card-img-top" src="` +
             img +
             `" alt="` +
             title +
             `">
             <div class="card-body">
-                <h5 class="card-title">` +
+                <h5 class="card-title" style= "color:white";>` +
             title +
             `</h5>
                 <p class="card-text">` +
@@ -28,7 +28,7 @@ const displayStore = (categories, products) => {
                 <p class="card-text">` +
             price +
             `</p>
-                <a class="btn btn-primary" id="addtocart" product_number=${product}>Add to Cart</a>
+                <a class="btn" style="background-color:#709a71; color: white" id="addtocart" product_number=${product}>Add to Cart</a>
             </div>
     </div></div>`;
     }
