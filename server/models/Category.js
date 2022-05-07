@@ -14,28 +14,12 @@ const categorySchema = new Schema({
  * Category Object
  */
 class Category {
-  #type; //String describing category
-  #products; //Array of products owned by category
-  #category_id; //int of categories id
-
-  /**
-   * Initalize the object
-   * @param {int} category_id
-   * @param {String} type
-   * @param {Array<Product>} products
-   */
-  constructor(category_id, type, products) {
-    this.#category_id = category_id;
-    this.#type = type;
-    this.#products = products;
-  }
-
   /**
    * Category string name
    * @returns The category name
    */
   getType() {
-    return this.#type;
+    return this.type;
 
   }
   /**
@@ -43,7 +27,7 @@ class Category {
    * @returns Array of products in category
    */
   getProducts() {
-    return this.#products;
+    return this.products;
   }
 
   /**
@@ -51,8 +35,8 @@ class Category {
    * @returns Category id
    */
   getID() {
-    return this.#category_id;
+    return this.category_id;
   }
 }
-categorySchema.loadClass(Cart);
+categorySchema.loadClass(Category);
 export default mongoose.model('Category', categorySchema);
