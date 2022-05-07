@@ -1,7 +1,19 @@
+import mongoose from "mongoose";
+
+const Schema = mongoose.Schema;
+/**
+ * Initalize the object
+ * @param {String} type
+ * @param {Dictionary<productSchemas>} products
+ */
+const categorySchema = new Schema({
+  type: String,
+  products: [{ type: Schema.ObjectId, ref: 'Product' }],
+});
 /**
  * Category Object
  */
-export default class Category {
+class Category {
   #type; //String describing category
   #products; //Array of products owned by category
   #category_id; //int of categories id
@@ -42,3 +54,5 @@ export default class Category {
     return this.#category_id;
   }
 }
+categorySchema.loadClass(Cart);
+export default mongoose.model('Category', categorySchema);
