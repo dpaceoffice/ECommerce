@@ -1,34 +1,29 @@
+import mongoose from "mongoose";
+
+const Schema = mongoose.Schema;
+/**
+ * Initilizes the cart object
+ * @param {Dictionary<productSchemas>} products
+ */
+const cartSchema = new Schema({
+  products: [{ type: Schema.ObjectId, ref: 'Product' }],
+  totalQuantity: Number,
+
+});
+
+
 /**
  * Cart object
  */
-export default class Cart {
-  #products; //map of product and their quantities
-  #totalQuantity; //Keep track of total amount of products so we dont have to scan for it
-  #cartID = -1; //INT cart instance ID
-  #dollarUS; // US dollar number formatter
-  /**
-   * Initilizes the cart object
-   * @param {int} cartID
-   * @param {Map<Product,int>} products
-   */
-  constructor(cartID, products = new Map()) {
-    this.#cartID = cartID;
-    this.#products = products;
-    this.#totalQuantity = 0;
-    this.#dollarUS = Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    });
-  }
+class Cart {
 
   /**
    *
    * @returns map of products and their quantities
    */
   getProducts() {
-    return this.#products;
+    return this.products;
   }
-
   /**
    * Adds product to map
    * @param {Product} product
@@ -36,12 +31,12 @@ export default class Cart {
    */
   addProduct(product, quantity) {
     if (this.getProducts().has(product)) {
-      var prevQ = this.#products.get(product);
-      this.#products.set(product, prevQ + quantity);
+      var prevQ = this.products.get(product);
+      this.products.set(product, prevQ + quantity);
     } else {
-      this.#products.set(product, quantity);
+      this.products.set(product, quantity);
     }
-    this.#totalQuantity += quantity;
+    this.totalQuantity += quantity;
   }
   /**
    * Removes product or modifies its quantity in map
@@ -50,13 +45,13 @@ export default class Cart {
    */
   removeProduct(product, quantity) {
     if (this.getProducts().has(product)) {
-      var curQ = this.#products.get(product);
+      var curQ = this.products.get(product);
       if (curQ <= quantity) {
-        this.#totalQuantity -= curQ;
-        this.#products.delete(product);
+        this.totalQuantity -= curQ;
+        this.products.delete(product);
       } else {
-        this.#totalQuantity -= quantity;
-        this.#products.set(product, curQ - quantity);
+        this.totalQuantity -= quantity;
+        this.products.set(product, curQ - quantity);
       }
     }
   }
@@ -65,7 +60,7 @@ export default class Cart {
    * @returns number of items in cart
    */
   getCount() {
-    return this.#totalQuantity;
+    return this.totalQuantity;
   }
   /**
    *
@@ -81,18 +76,24 @@ export default class Cart {
    * @returns string html for shopping cart overview
    */
   getHtmlElement() {
+    const dollarUS = Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+    });
     let total = 0.0;
     let body = `<p>The shopping cart is currently empty</p>`;
-    if (this.#products.size > 0) {
+    if (this.products.size > 0) {
       body = ``;
-      for (const [product, quantity] of this.#products) {
-        body += `<p>${product.getTitle()} - ${this.#dollarUS.format(
+      for (const [product, quantity] of this.products) {
+        body += `<p>${product.getTitle()} - ${dollarUS.format(
           product.getPrice()
         )} x ${quantity} <button type="button" class="btn btn-sm btn-danger" id="rmfromcart" product_number=${product.getID()}>remove</button></p>`;
         total += product.getPrice() * quantity;
       }
     }
-    total = `Total Cost: ${this.#dollarUS.format(total)}`;
+    total = `Total Cost: ${dollarUS.format(total)}`;
     return [body, total];
   }
 }
+cartSchema.loadClass(Cart);
+export default mongoose.model('Cart', cartSchema);
