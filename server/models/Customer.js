@@ -6,6 +6,7 @@ const userSchema = new Schema({
   email: String,
   carts: [{ type: Schema.ObjectId, ref: 'Cart' }],
   curCart: Number,
+  curCtg: Number,
   htmlElement: String//`<i class="bi bi-house"></i> Greetings ${this.getName()}!`
 });
 
@@ -36,6 +37,14 @@ class Customer {
    */
   getHtml() {
     return `<i class="bi bi-house"></i> Greetings ${this.getName()}!`;
+  }
+  /**
+   * Sets the current category to int
+   * @param {int} id
+   *
+   */
+  setCurrentCategory(id) {
+    this.curCtg = id;
   }
 }
 
