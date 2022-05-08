@@ -6,20 +6,19 @@ post = function (url, data) {
 
 function init() {
     getStore();
-    getCheckout();
+    //getCheckout();
 }
-async function getStore() {
+async function getStore(cat = undefined) {
     const response = await fetch(`http://localhost:3000/store-data`);
     const data = await response.json();
-    displayStore(data.cstate, data.pstate)
+    displayStore(data.cstate, data.pstate, cat)
 }
 
 async function sendActiveCat(attributes) {
     const id = attributes.cat_id.nodeValue;
-    const response = await post('http://localhost:3000/setCategory', { id });
-    const data = await response.json();
-    if (data.success)
-        getStore();
+    //const response = await post('http://localhost:3000/setCategory', { id });
+    //const data = await response.json();
+    await getStore(cat = id);
 }
 
 async function addProductToCart(attributes) {
