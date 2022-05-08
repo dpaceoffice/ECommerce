@@ -35,7 +35,7 @@ class Category {
    * @returns Category id
    */
   getID() {
-    return this.category_id;
+    return this._id;
   }
 }
 categorySchema.loadClass(Category);
