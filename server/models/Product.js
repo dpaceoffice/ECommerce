@@ -16,7 +16,7 @@ class Product {
      * @returns int ID of product
      */
     getID() {
-        return this.productID;
+        return this._id;
     }
     /**
      *
