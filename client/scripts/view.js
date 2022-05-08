@@ -1,16 +1,34 @@
-const displayStore = (categories, products) => {
+const displayStore = (categories, products, cat) => {
     document.getElementById("categories-container").innerHTML = "";
     document.getElementById("products-container").innerHTML = "";
+    let active = undefined;
     for (const category in categories) {
-        let title = categories[category];
+        let data = categories[category];
+        var id = data['_id'];
+        var type = data['type'];
+        if (cat == undefined)
+            cat = id;
+        if (id == cat)
+            active = data['products']
         document.getElementById("categories-container").innerHTML +=
-            `<li id="cat_id" cat_id=` + category + ` class="btn list-group-item">` +
-            title +
+            `<li id="cat_id" cat_id=` + id + ` class="btn list-group-item">` +
+            type +
             `</li>`;
     }
     addController('cat_id');
+
     for (const product in products) {
-        let [img, title, desc, price] = products[product];
+        let data = products[product];
+        var id = data['_id'];
+        if (!active.includes(id))
+            continue;
+        var title = data['title'];
+        var desc = data['des'];
+        var price = Intl.NumberFormat("en-US", {
+            style: "currency",
+            currency: "USD",
+        }).format(data['price']);
+        var img = data['image'];
         document.getElementById("products-container").innerHTML +=
             `<div class="col"><div class="card mb-3" style="filter: drop-shadow(7px 7px 0px #597658); width: 18rem; border-width: thick; border-style: solid; border-color: #709a71;">
         <img class="card-img-top" src="` +

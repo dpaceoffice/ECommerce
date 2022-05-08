@@ -1,10 +1,12 @@
 import mongoose from "mongoose";
+
 const Schema = mongoose.Schema;
 const userSchema = new Schema({
   name: String,
   email: String,
-  carts: { type: Array, "default": [] },
+  carts: [{ type: Schema.ObjectId, ref: 'Cart' }],
   curCart: Number,
+  curCtg: Number,
   htmlElement: String//`<i class="bi bi-house"></i> Greetings ${this.getName()}!`
 });
 
@@ -12,6 +14,9 @@ const userSchema = new Schema({
  * Customer Object
  */
 class Customer {
+  getCarts() {
+    return this.carts;
+  }
   /**
    * Gets the cart's id
    * @returns Active cart id
@@ -32,6 +37,14 @@ class Customer {
    */
   getHtml() {
     return `<i class="bi bi-house"></i> Greetings ${this.getName()}!`;
+  }
+  /**
+   * Sets the current category to int
+   * @param {int} id
+   *
+   */
+  setCurrentCategory(id) {
+    this.curCtg = id;
   }
 }
 

@@ -1,61 +1,51 @@
+import mongoose from "mongoose";
+
+const Schema = mongoose.Schema;
+const productSchema = new Schema({
+    title: String,//String title of product
+    des: String,//String description of product
+    price: Number,//double price of product
+    image: String//string path to image of product
+});
 /**
  * Product Object
  */
-export default class Product {
-    #productID; //INT value to refer to product
-    #title; //String title of product
-    #des; //String description of product
-    #price; //double price of product
-    #image; //string path to image of product
-
-    /**
-     * Constructs the object
-     * @param {int} productID
-     * @param {String} title
-     * @param {String} des
-     * @param {double} price
-     * @param {String} image
-     */
-    constructor(productID, title, des, price, image) {
-        this.#productID = productID;
-        this.#title = title;
-        this.#des = des;
-        this.#price = price;
-        this.#image = image;
-    }
+class Product {
     /**
      *
      * @returns int ID of product
      */
     getID() {
-        return this.#productID;
+        return this._id;
     }
     /**
      *
      * @returns string image of product
      */
     getImage() {
-        return this.#image;
+        return this.image;
     }
     /**
      *
      * @returns String title of product
      */
     getTitle() {
-        return this.#title;
+        return this.title;
     }
     /**
      *
      * @returns String description of product
      */
     getDescription() {
-        return this.#des;
+        return this.des;
     }
     /**
      *
      * @returns double price in US dollar format
      */
     getPrice() {
-        return this.#price;
+        return this.price;
     }
 }
+productSchema.loadClass(Product);
+export default mongoose.model('Product', productSchema);
