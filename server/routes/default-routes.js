@@ -1,4 +1,4 @@
-import Controller from "../controllers/default-controller.js";
+import Controller from "../config/default-controller.js";
 import express from 'express';
 
 export default class Router {
@@ -14,6 +14,9 @@ export default class Router {
         router.get('/carts', controller.getCarts)
         router.post('/add-product', controller.addToCart);
         router.post('/remove-product', controller.removeFromCart);
+
+        /**Login */
+        router.post('/login', controller.login);
 
         /**Expects category id in post body*/
         router.post('/category', controller.getCategory);
