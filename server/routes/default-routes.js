@@ -20,6 +20,18 @@ export default class Router {
         router.post('/category/products', controller.getProducts);
 
         router.get('/test-add', controller.test);
+
+
+        /* ADMINISTRATION CODE */
+
+        router.get('/admin', controller.loadAdmin);
+        router.post('/admin/addProduct', controller.addProduct);
+        router.post('/admin/rearrangeLayout', controller.rearrangeLayout);
+        router.post('/admin/removeProduct', controller.removeProduct);
+        router.get('/productById/:id', controller.productById);
+        router.post('/admin/editProduct', controller.editProduct);
+
+        /*^^^^ ADMINISTRATION CODE ^^^^*/
     }
     getRouter() {
         return this.#router;
