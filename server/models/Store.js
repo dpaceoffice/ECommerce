@@ -67,6 +67,22 @@ class Store {
     });
     return await newProduct.save();
   }
+  
+  async findCustomer(email) {
+    const exists = await Customer.find({email:email})
+    if (exists.length > 0) {
+      return exists[0];
+    } else
+      return undefined
+  }
+  async serializeCustomer(id) {
+    const exists = await Customer.find({_id:id})
+    if (exists.length > 0) {
+      return exists[0];
+    } else
+      return undefined
+  }
+
   async createCategory(type, products) {
     const exists = await Category.find({ type: type });
     if (exists.length > 0) {
