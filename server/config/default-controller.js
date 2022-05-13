@@ -1,6 +1,7 @@
 import Store from "../models/Store.js";
 import Product from "../models/Product.js";
 import Category from "../models/Category.js";
+import Customer from "../models/Customer.js";
 import passport from "./passport.js";
 
 export default class Controller {
@@ -13,7 +14,7 @@ export default class Controller {
         this.removeFromCart = this.removeFromCart.bind(this);
         this.getCarts = this.getCarts.bind(this);
         this.test = this.test.bind(this);
-        this.getStore = this.getStore.bind(this);
+        //this.getStore = this.getStore.bind(this);
     }
     async getStore() {
         var store = await Store.find({});
@@ -77,11 +78,11 @@ export default class Controller {
         console.log(request.session.id);//express
 
         const config = {};
-        config.successRedirect = '/';
-        config.failureRedirect = '/login';
+        //config.successRedirect = '/';
+        //config.failureRedirect = '/login';
         const authHandler = passport.authenticate('local', config);
         authHandler(request, response, next);//passes body into passport
-        response.send('success');
+        //response.send('success');
     }
 
     getCarts(request, response) {
@@ -124,12 +125,21 @@ export default class Controller {
         let bows = [crossbow, longbow];
         let bow_cat = await store.createCategory("Bows", bows);
         await store.addCategory(bow_cat);
-
+        await store.createCustomer(
+            "David",
+            "david@test",
+            "password",
+            undefined,
+            0,
+            0,
+            undefined
+        )
         const store_state = await Store.find();
         const products = await Product.find();//persistent product scheme instances
         const categories = await Category.find();
-        const requester = request.user.name;
-        const data = { store_state, products, categories, requester };
+        const users = await Customer.find();
+        const authenticated_user = request.user;
+        const data = { store_state, products, categories, users, authenticated_user };
         response.json(data);
     }
 }
