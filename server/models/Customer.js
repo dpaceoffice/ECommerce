@@ -4,6 +4,7 @@ const Schema = mongoose.Schema;
 const userSchema = new Schema({
   name: String,
   email: String,
+  password: String,
   carts: [{ type: Schema.ObjectId, ref: 'Cart' }],
   curCart: Number,
   curCtg: Number,
@@ -45,6 +46,13 @@ class Customer {
    */
   setCurrentCategory(id) {
     this.curCtg = id;
+  }
+  /**
+   * Temporary
+   * @returns password
+   */
+  getPassword() {
+    return this.password;
   }
 }
 
