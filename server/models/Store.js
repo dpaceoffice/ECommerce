@@ -67,16 +67,33 @@ class Store {
     });
     return await newProduct.save();
   }
-  
+
+  async createCustomer(name, email, password, carts = undefined, curCart = 0, curCtg = 0, htmlElement = undefined) {
+    const exists = await Customer.find({ email: email })
+    if (exists.length > 0) {
+      return exists[0];
+    }
+    let newCustomer = new Customer({
+      name: name,
+      email: email,
+      password: password,
+      carts: carts,
+      curCart: curCart,
+      curCtg: curCtg,
+      htmlElement: htmlElement//`<i class="bi bi-house"></i> Greetings ${this.getName()}!`
+    });
+    return await newCustomer.save();
+  }
+
   async findCustomer(email) {
-    const exists = await Customer.find({email:email})
+    const exists = await Customer.find({ email: email })
     if (exists.length > 0) {
       return exists[0];
     } else
       return undefined
   }
   async serializeCustomer(id) {
-    const exists = await Customer.find({_id:id})
+    const exists = await Customer.find({ _id: id })
     if (exists.length > 0) {
       return exists[0];
     } else
