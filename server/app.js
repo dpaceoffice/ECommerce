@@ -26,11 +26,11 @@ const port = process.env.PORT | 3000;
 const routes = new Router().getRouter();
 function setupApp() {
     app.use(cors());
-    app.use(bodyParser.json());//may need to change to use passport
-    const sessionConfig = { secret:process.env.SECRET_SESSION, resave:false, saveUninitialized:true };
+    app.use(bodyParser.urlencoded({ extended: false }))
+    const sessionConfig = { secret: process.env.SECRET_SESSION, resave: false, saveUninitialized: true };
     app.use(session(sessionConfig));
-    app.use( passport.initialize() );
-    app.use( passport.session() );
+    app.use(passport.initialize());
+    app.use(passport.session());
     app.use('/', routes);
 }
 setupApp();
