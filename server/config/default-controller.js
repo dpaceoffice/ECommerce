@@ -1,7 +1,7 @@
 import Store from "../models/Store.js";
 import Product from "../models/Product.js";
 import Category from "../models/Category.js";
-import passport from "./config/passport.js";
+import passport from "./passport.js";
 
 export default class Controller {
     constructor() {
@@ -72,7 +72,7 @@ export default class Controller {
         response.json({ success: true });
     }
     login(request, response, next) {
-        const {email, password} = request.body;
+        const { email, password } = request.body;
         console.log(email, password);
         console.log(request.session.id);//express
 
@@ -129,7 +129,7 @@ export default class Controller {
         const products = await Product.find();//persistent product scheme instances
         const categories = await Category.find();
         const requester = request.user.name;
-        const data = { store_state, products, categories,  requester};
+        const data = { store_state, products, categories, requester };
         response.json(data);
     }
 }
