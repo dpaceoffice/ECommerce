@@ -1,9 +1,9 @@
 import { Strategy } from "passport-local";
 import passport from "passport";
-import Store from "../models/Store.js";
+import Customer from "../models/Customer.js";
 
 async function authenticateUser(email, password, done) {
-  const user = await Store.findUser("email", email);
+  const user = await Customer.findOne({ email: email });
   if (user === undefined) {
     console.log("No user with that email");
     return done(null, false);
@@ -22,7 +22,7 @@ async function setupPassport() {
   const localStrategy = new Strategy(formNames, authenticateUser);
   passport.use(localStrategy);
   passport.serializeUser((user, done) => done(null, user['_id']));
-  passport.deserializeUser((id, done) => done(null, Store.serializeCustomer(id)));
+  passport.deserializeUser(async (id, done) => done(null, await Customer.findOne({ _id: id })));
 }
-setupPassport();
+await setupPassport();
 export default passport;
