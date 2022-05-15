@@ -28,8 +28,10 @@ export default class Router {
         router.post('/admin/addProduct', controller.addProduct);
         router.post('/admin/rearrangeLayout', controller.rearrangeLayout);
         router.post('/admin/removeProduct', controller.removeProduct);
-        router.get('/productById/:id', controller.productById);
+        router.get('/admin/productById/:id', controller.productById);
         router.post('/admin/editProduct', controller.editProduct);
+        router.get('/admin/getCategoriesIds', controller.getCategoriesIds);
+        router.get('/admin/requestCatProducts/:id/:type', controller.returnCatProducts)
 
         /*^^^^ ADMINISTRATION CODE ^^^^*/
     }
