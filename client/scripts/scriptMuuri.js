@@ -122,9 +122,9 @@ function generateElements(data, amount) {
     for (var i = 0, len = amount || 1; i < amount; i++) {
         //console.log("add card: "+ data[i].id);
         var id = ++uuid;
-        var prodID = data[i].id;
+        var prodID = data[i]._id;
         var title = data[i].title;
-        var description = data[i].description;
+        var description = data[i].des;
         var price = data[i].price;
         var image = data[i].image;
         var color = 'green'; //getRandomItem(filterOptions);
