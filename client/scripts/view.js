@@ -53,6 +53,58 @@ const displayStore = (categories, products, cat) => {
     addController('addtocart');
 }
 
+const displayOptions = (authenticated) => {
+    const widget = document.getElementById('auth-status-button');
+    const content = document.getElementById('modal-content');
+    widget.innerHTML = '';
+    if (authenticated) {
+        widget.innerHTML = `<button type="button" class="btn" style="color: white;" id="checkout" data-bs-toggle="modal"
+        data-bs-target="#staticBackdrop">
+        <i id='checkout-button' class="bi bi-cart"> </i>Checkout
+        </button>`;
+        content.innerHTML = `<div class="modal-header" style="background-color: #d2e2d8;">
+        <h5 class="modal-title" id="staticBackdropLabel">Shopping Cart</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div id="cart-body" class="modal-body flex">
+            <p>The shopping cart is currently empty</p>
+        </div>
+        <div class="modal-footer">
+            <p id="cost-label" class="bi-text-left me-5">Total Cost: $0.00
+            <p>
+                <!--<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>-->
+                <button type="button" class="btn" style="background-color: #709a71;">Continue to
+                    checkout</button>
+        </div>`;
+    } else {
+        widget.innerHTML = `<button type="button" class="btn" style="color: white;" id="login-show" data-bs-toggle="modal"
+        data-bs-target="#staticBackdrop">
+        <i id='checkout-button' class="bi bi-cart"> </i>Login
+        </button>`;
+        content.innerHTML = `<div class="modal-header" style="background-color: #d2e2d8;">
+        <h5 class="modal-title" id="staticBackdropLabel">Login</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body flex">
+            <div>
+                <label for='email'>Email:</label>
+                <input type='email' id='email' name='email' required>
+            </div>
+            <br>
+            <div>
+                <label for='password'>Password:</label>
+                <input type='password' id='password' name='password' required>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <p class="bi-text-left me-5">Don't have an account? Click here.<p>
+                <!--<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>-->
+                <button id="login-button" type="button" class="btn" style="background-color: #709a71;">Login</button>
+        </div>`;
+        addController("login-button");
+    }
+}
+
 const displayCheckout = (body, total, checkout) => {
     document.getElementById("checkout").innerHTML = checkout
     document.getElementById("cart-body").innerHTML = body;
