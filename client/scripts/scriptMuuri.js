@@ -110,8 +110,8 @@ function updateIndices() {
 }
 
 function generateElements(data, amount) {
-    console.log("DATA");
-    console.log(data[0]);
+    //console.log("DATA");
+    //console.log(data[0]);
 
     // reloading the pages after changes
     uuid = 0;
@@ -120,7 +120,7 @@ function generateElements(data, amount) {
     var ret = [];
 
     for (var i = 0, len = amount || 1; i < amount; i++) {
-        console.log("add card: "+ data[i].id);
+        //console.log("add card: "+ data[i].id);
         var id = ++uuid;
         var prodID = data[i].id;
         var title = data[i].title;
@@ -131,24 +131,34 @@ function generateElements(data, amount) {
         var width = Math.floor(Math.random() * 2) + 1;
         var height = Math.floor(Math.random() * 2) + 1;
         var itemElem = document.createElement('div');
+        //
 
         var itemTemplate = '' +
-            '<div class="item" data-id="' + id + '" data-prodid ="' + prodID + '" data-title="' + title + '" style= "filter: drop-shadow(7px 7px 0px #597658); width: 18rem; height:35 rem; border-width: thick; border-style: solid; border-color: #709a71; background-color: #709a71;">' +
+            '<div class="item" data-id="' + id + '" data-prodid ="' + prodID + '" data-title="' + title + '" style = "filter: drop-shadow(7px 7px 0px #597658); width: 18rem; height:35 rem; border-width: thick; border-style: solid; border-color: #709a71; background-color: #709a71;">' +
             '<div class="item-content">' +
             '<div class="card mb-3" style="width: 16rem; height:35 rem; background-color: #709a71; border-style: none;">' +
+
             '<div class="card-id">' + id + '</div>' +
             '<a class="item-pic" target="_blank"><img class="card-img-top" id= "productImg" style="width: 17rem; height: 12rem; justify-content: center;" src="' + image + '" alt="' + image.match(/[\w-]+\.(jpg|png|gif)/g) + '"></a>' +
+            
+            '<div class = "card-body"'+
             '<div class="card-title"> <p class = "titleStyle">' + title + '</p></div>' +
             '<div class="desRule"> <p class="card-des">' + description + '</p> </div>' +
             '<p class="card-price"> $' + price + '</p>' +
-            '<button class="btn editProduct" style="background-color:#709a71;" data-bs-toggle="modal" data-bs-target="#editProductModal" data-bs-whatever="@getbootstrap" product_number= "' + prodID+ '">Edit</button> </div>' +
-            '<div class="card-remove" ><button class="btn removeProdBut"><i class="material-icons">&#xE5CD;</i></div></button>' +
+            '</div>' +
+
+            '<button class="btn card-edit editProduct" id= "wantToEditBut" style="background-color:#709a71;" data-bs-toggle="modal" data-bs-target="#editProductModal" data-bs-whatever="@getbootstrap" product_number= "' + prodID+ '"> Edit </button>' +
+            '<div class="card-remove" > <button id = "removeProdBut" class="btn" product_number ="'+ prodID +'"> <i class="material-icons">&#xE5CD;</i> </div> </button>' +
+
+
             '</div>' +
             '</div>' +
             '</div>';
 
         itemElem.innerHTML = itemTemplate;
         ret.push(itemElem.firstChild);
+
+        //            '<button class="btn editProduct" id= "wantToEditBut" style="background-color:#709a71;" data-bs-toggle="modal" data-bs-target="#editProductModal" data-bs-whatever="@getbootstrap" product_number= "' + prodID+ '"> Edit </button>' +
 
     }
 
@@ -176,14 +186,14 @@ function initGrid(data) {
         layoutEasing: 'ease',
         dragEnabled: true,
         dragSortInterval: 50,
-        dragContainer: document.querySelector('.card-body'),
+        dragContainer: document.querySelector('card-body'),
         dragReleaseDuration: 400,
         dragReleseEasing: 'ease',
         dragStartPredicate: function (item, event) {
             var isDraggable = sortFieldValue === 'order';
             var isRemoveAction = elementMatches(event.target, '.card-remove, .card-remove i');
-            console.log("isRemove: " + isRemoveAction);
-            console.log("draggable: " + isDraggable)
+            //console.log("isRemove: " + isRemoveAction);
+            //console.log("draggable: " + isDraggable)
             return isDraggable && !isRemoveAction ? Muuri.ItemDrag.defaultStartPredicate(item, event) : false;
         },
 
@@ -204,8 +214,10 @@ function initGrid(data) {
         }
     })
 
-    console.log(grid);
-    console.log("RELOAD: " + Object.values(grid));
+    
+    //console.log(grid);
+    //console.log("RELOAD: " + Object.values(grid));
+    //console.log("RELOAD");
     //console.log(grid.getID());
 
     sortFieldValue = 'order';
@@ -282,8 +294,8 @@ function loadLayout(grid, serializedLayout) {
 
 function elementMatches(element, selector) {
     var p = Element.prototype;
-    console.log("P: ----------------------------");
-    console.log(p);
+    //console.log("P: ----------------------------");
+    //console.log(p);
     //console.log(p.matches || p.matchesSelector || p.mozMatchesSelector || p.msMatchesSelector || p.oMatchesSelector).call(element, selector);
     // p.webkitMatchesSelector - deprecated
     return (p.matches || p.matchesSelector || p.mozMatchesSelector || p.msMatchesSelector || p.oMatchesSelector).call(element, selector);
@@ -314,7 +326,7 @@ function elementClosest(element, selector) {
     });
 
 
-    const componentMuuri = (dataId, productURL, imagePath, titleName, desc, price, productNum) =>
+    /*const componentMuuri = (dataId, productURL, imagePath, titleName, desc, price, productNum) =>
 
     `
     <div class="item" data-id="${dataId}">
@@ -331,7 +343,7 @@ function elementClosest(element, selector) {
         </div>
     </div> 
     `
-    ;
+    ;*/
 
     /*
 
