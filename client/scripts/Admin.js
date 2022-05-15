@@ -61,7 +61,7 @@ async function postNewProduct(postData) {
         }
     )
         .then(checkStatus)
-        .then(() => { console.log('updated!!!'); console.log(postData);console.log(array[0]) })
+        .then(() => { console.log('updated!!!'); console.log(postData); console.log(array[0]) })
         .then(() => { reloadAdminPage(); console.log("reload"); })
     //.then(() => { addNewProduct(array) })
 }
@@ -113,8 +113,9 @@ async function loadAdminPage() {
         //startPage();
         localStorage.clear();
         //adminPage(data);
-        viewAdminPage(data);
-        
+        categories();
+        //viewAdminPage(data);
+
     } else {
         console.log("FAIL!");
     }
@@ -122,22 +123,83 @@ async function loadAdminPage() {
     //return data;
 }
 
+/* Get the list of categories from mongodb */
+async function getCategoriesIds() {
+    const url = `http://localhost:3000/admin/getCategoriesIds`;
+    const response = await fetch(url);
+    const data = await response.json();
+    console.log(response);
+    if (data) {
+        console.log("Success Categories ID and Type:");
+        console.log(data);
+        addCategoryOptions(data);
+    } else {
+        console.log("FAIL did not get categories or type")
+    }
+}
+
+/*request and get back products based on category */
+async function postCategoryProducts(category) {
+    const url = `http://localhost:3000/admin/requestCatProducts/${category.id}/${category.type}`;
+    const response = await fetch(url);
+    const data = await response.json();
+    let jsonData;
+    let jsonDataLength;
+    console.log(Object.keys(data).length)
+    if (Object.keys(data).length > 1) {
+        console.log(">1");
+        jsonData = JSON.parse(data);
+        jsonDataLength = jsonData.products.length;
+
+        console.log("SUCCESS!");
+        console.log(JSON.parse(data));
+        console.log(jsonData.products);
+        //reloadAdminPage();
+        viewAdminPage(jsonData.products, category.id, category.type);
+    } else if (Object.keys(data).length == 1) {
+        if (document.getElementById("view").getAttribute("cat") != "-100") {
+            reloadAdminPage();
+        }
+        viewAdminPage([], data.id, category.type)
+    } else {
+        console.log("Fail")
+    }
+
+    if (jsonDataLength != 0) {
+        console.log("SUCCESS!");
+        console.log(JSON.parse(data));
+        console.log(jsonData.products);
+        //reloadAdminPage();
+        viewAdminPage(jsonData.products, category.id, category.type);
+    } else if (jsonDataLength == 0) {
+        //console.log("ID-------------"+JSON.parse(data).id)
+        reloadAdminPage();
+        viewAdminPage([], jsonData.id, category.type)
+    } else {
+        console.log("FAIL!");
+    }
+    //console.log(data);
+    return data;
+
+}
+// .then(() => { reloadAdminPage(); console.log("reload"); })
+
 /* Get product's information by get request and sending product id */
 async function getProductById(id) {
-    const url = `http://localhost:3000/productById/${id}`;
+    const url = `http://localhost:3000/admin/productById/${id}`;
     const response = await fetch(url);
     console.log("getProdById: " + id + " | " + JSON.stringify(id.product_number));
     const data = await response.json();
     if (data) {
         console.log("SUCCESS!");
         console.log(data);
+        
     } else {
         console.log("FAIL!");
     }
     //console.log(data);
     return data;
 }
-
 
 //^^^^ ADMINISTRATION CODE ^^^^^
 
@@ -152,7 +214,8 @@ const submitEvent = function () {
     if (formData.image == "") {
         formData.image = "./assets/default_img.png";
     }
-    //console.log(formData);
+    console.log(formData);
+    console.log(document.getElementById("view").getAttribute("cat"));
     postNewProduct(formData);
     window.localStorage.setItem("formData", JSON.stringify(formData))
 }
@@ -170,7 +233,7 @@ const editEvent = function (attributes) {
 }
 
 
-const editProductGetID = async function(attributes) {
+const editProductGetID = async function (attributes) {
     console.log("Clicking Edit");
     let product = await getProductById(attributes.product_number.nodeValue);
     console.log("Product info from server for editting " + product.id);
@@ -181,4 +244,53 @@ const editProductGetID = async function(attributes) {
     document.getElementById("editProduct-description").value = product.description;
     document.getElementById("editProduct-price").value = product.price;
 }
+
+const addCategoryOptions = function (data) {
+    var mySelect = document.getElementById("mySelect");
+    mySelect.innerHTML = "";
+
+    var createOption = document.createElement("option");
+    createOption.setAttribute("id", -1)
+    createOption.innerHTML = "Create New Category";
+    mySelect.add(createOption);
+
+    document.getElementById("createCategory").value = "";
+
+    data.forEach(element => {
+        var option = document.createElement("option");
+        option.setAttribute("id", element._id)
+        option.setAttribute("type", element.type)
+        option.innerHTML = element.type;
+        console.log(element._id);
+        mySelect.add(option);
+    });
+
+}
+
+const getProductsByCat = function () {
+    const select = document.getElementById("mySelect");
+    const value = select.options[select.selectedIndex];
+    console.log(value.getAttribute('id'));
+    console.log(value.getAttribute('type'));
+    //console.log(typeof value.getAttribute('id'));
+
+    const newCategoryName = document.getElementById("createCategory").value;
+    console.log(newCategoryName);
+
+    const requestedCategory = new Object();
+
+    if (value.getAttribute('id') == "-1") {
+        requestedCategory.id = "-1";
+        requestedCategory.type = newCategoryName;
+    } else {
+        requestedCategory.id = value.getAttribute('id');
+        requestedCategory.type = value.getAttribute('type')
+    }
+
+    let categoryProducts = postCategoryProducts(requestedCategory).cancel;
+    console.log(categoryProducts);
+    //viewAdminPage(categoryProducts);
+}
+
+
 
