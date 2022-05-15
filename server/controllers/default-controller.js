@@ -13,6 +13,7 @@ export default class Controller {
         this.getCarts = this.getCarts.bind(this);
         this.test = this.test.bind(this);
         this.getStore = this.getStore.bind(this);
+        this.addProduct = this.addProduct.bind(this);
     }
     async getStore() {
         var store = await Store.find({});
@@ -120,6 +121,9 @@ export default class Controller {
 
     /* ADMINISTRATION CODE*/
 
+    // SERVER NEEDS TO ACCESS MONGODB TO MAKE CHANGES TO THE DATABASE
+
+    /* Load admin page by getting collection of products from mongodb and sending it to client to load page */
     loadAdmin(request, response) {
 
         let products = [
@@ -172,6 +176,7 @@ export default class Controller {
 
     }
 
+    /* Add new product object to mongodb by receiving the new product as JSON
     addProduct(request, response) {
         response.send(request.body);
         console.log("POST SUCCESS! Added product! Can update mongo!");
@@ -196,8 +201,53 @@ export default class Controller {
         products[Number(request.body.id)] = request.body;
         //console.log("APPENDED");
         //console.log(products);
+    }*/
+
+
+    /* Add new product object to mongodb by receiving the new product as JSON */
+    async addProduct(request, response) {
+        response.send(request.body);
+        console.log("POST SUCCESS! Added product! Can update mongo!");
+        console.log(request.body.id);
+        console.log(request.body.title);
+        console.log(request.body.description);
+        console.log(request.body.price);
+        console.log(request.body.image);
+        // request.body.category
+
+        var store = await this.getStore();
+
+        let product = await store.createProduct(
+            request.body.title,
+            request.body.description,
+            request.body.price,
+            request.body.image
+        )
+
+        // current category you are viewing
+
+        /*let products = {
+            0: {
+                id: 0,
+                title: "Katana",
+                description: "A very very sharp sword used by samurai",
+                price: 5.0,
+                image: "./assets/katana.png"
+            },
+            1: {
+                id: 1,
+                title: "Great Sword",
+                description: "A great sword, used by the largest men",
+                price: 25.0,
+                image: "./assets/greatsword.png"
+            },
+        }
+        products[Number(request.body.id)] = request.body;*/
+        //console.log("APPENDED");
+        //console.log(products);
     }
 
+    /* Can rearrange layout/order of products by sending an array that contains the order based on the products' id */
     rearrangeLayout(request, response) {
         response.send(request.body);
         console.log("POST SUCCESS! Rearrange Layout! Can update mongo!");
@@ -205,12 +255,14 @@ export default class Controller {
 
     }
 
+    /* Remove product by receiving the product id from the client and removing it in mongodb */
     removeProduct(request, response) {
         response.send(request.body);
         console.log("POST SUCCESS! Removed Product's ID: " + JSON.stringify(request.body));
 
     }
 
+    /* Get product information by client sending requested product id to server. Server can then access mongodb and get product */
     productById(request, response) {
         const id = request.params.id;
         console.log("ID: " + request.params.id);
@@ -223,6 +275,7 @@ export default class Controller {
         })
     }
 
+    /* Edit product information by client sending new changes as a product object to update product in mongodb */
     editProduct(request, response) {
         response.send(request.body);
         console.log("POST SUCCESS! Edit Product! Can update mongo!");
