@@ -89,6 +89,41 @@ export default class Controller {
         const data = { carts, html }
         response.json(data)
     }
+
+    //Customer
+    async register(request, response) {
+        const { name, email, password } = request.body;
+        console.log(request.body)
+
+        let errors = [];
+
+        if (!name || !email || !password) {
+            errors.push({ msg: "Fill in the fields" });
+        }
+
+        if (errors.length > 0) {
+            console.log(errors);
+        } else {
+            Customer.findOne({ email: email }).then(user => {
+                if (user) {
+                    errors.push({ msg: "Email already exists." });
+                    console.log(errors);
+                } else {
+                    const newCustomer = new Customer({ name: name, email: email, password: password });
+                    const document = newCustomer.save()
+                    const data = { document: document }
+                    response.json(data);
+                }
+            })
+        }
+
+    }
+
+    async getCustomerData(request, response) {
+        var customer = await Customer.find({});
+        response.json({ customer });
+    }
+
     async test(request, response) {
         await Store.createCustomer(
             "David",
