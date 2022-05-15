@@ -5,6 +5,7 @@ const userSchema = new Schema({
   name: String,
   email: String,
   password: String,
+  rights: Number,
   carts: [{ type: Schema.ObjectId, ref: 'Cart' }],
   curCart: Number,
   curCtg: Number,
