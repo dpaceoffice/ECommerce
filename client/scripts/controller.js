@@ -18,9 +18,7 @@ const getAdminCallbacks = () => ({
     "removeProdBut": postRemove,
     "saveOrder": postLayout,
     "wantToEditBut": editProductGetID,
-    "editProductBut": editEvent,
-    "categoryBut": getCategoriesIds,
-    "categoryDecisionBut": getProductsByCat
+    "editProductBut": editEvent
 })
 
 const adminAddController = async function (...adminButtonIDs) {
@@ -28,13 +26,13 @@ const adminAddController = async function (...adminButtonIDs) {
     for (let id of adminButtonIDs) {
         for (let element of document.querySelectorAll('[id=' + id + ']')) {
             console.log("ID: " + id);
-            element.addEventListener("click", async () => {
+            element.addEventListener("click", () => {
                 console.log("CLICKED! "+ id);
                 if (id == "saveOrder") {
                     console.log("LAYOUT___:" + window.localStorage.getItem('prodIdlayout'))
-                    await adminCallbacks[id](window.localStorage.getItem('prodIdlayout'))
+                    adminCallbacks[id](window.localStorage.getItem('prodIdlayout'))
                 } else {
-                    await adminCallbacks[id](element.attributes)
+                    adminCallbacks[id](element.attributes)
                 }
             });
         }

@@ -1,7 +1,6 @@
 import Store from "../models/Store.js";
 import Product from "../models/Product.js";
 import Category from "../models/Category.js";
-import { response } from "express";
 
 export default class Controller {
     constructor() {
@@ -15,7 +14,6 @@ export default class Controller {
         this.test = this.test.bind(this);
         this.getStore = this.getStore.bind(this);
         this.addProduct = this.addProduct.bind(this);
-        this.returnCatProducts = this.returnCatProducts.bind(this);
     }
     async getStore() {
         var store = await Store.find({});
@@ -125,125 +123,8 @@ export default class Controller {
 
     // SERVER NEEDS TO ACCESS MONGODB TO MAKE CHANGES TO THE DATABASE
 
-    getCategoriesIds(request, response) {
-        const productsMongo = async () => {
-            ;
-            const categories = await Category.find({}, { type: 1 });
-            //console.log(categories);
-            response.json(categories);
-            console.log("GET SUCCESS! GET categories and types from mongodb");
-        };
-        productsMongo();
-    }
-
-    returnCatProducts(request, response) {
-        //const id = request.params.id;
-        //var store = await this.getStore();
-        console.log(request.params);
-        console.log("ID: " + request.params.id + " | Type: " + request.params.type);
-        const id = request.params.id;
-        const type = request.params.type;
-        var products = new Array();
-        if (id == "-1") {
-            //await store.createCategory(type, []);
-            response.send(JSON.stringify({"id": "-1"},{"products": []}));
-        } else {
-            let productsNum;
-            let i = 0;
-            let array = new Array();
-            const productsMongo = async () => {
-                //console.log(id);
-                //console.log(typeof id);
-                const categories = await Category.find({ _id: id }, { products: 1 });
-                //console.log(categories);
-                productsNum = await categories[0].products.length;
-                i = 0;
-                array = await categories[0].products;
-            };
-
-            let mongoCatProd = function () {
-                return Category.find({ _id: id }, { products: 1 })
-            }
-            let mongoCatProd2 = mongoCatProd();
-            console.log(mongoCatProd);
-
-            mongoCatProd2.then(function(result) {
-                //console.log("what?????");
-                console.log(result[0].products);
-                productsNum = result[0].products.length;
-                console.log(catProdIds(result[0].products));
-                
-            })
-
-            const catProdIds = async (array2) => {
-                for (let element of array2) {
-                    //console.log(element.valueOf())    
-                    let prodID = element.toString();
-                    //console.log(typeof prodID + ": " + prodID);
-                    let addProd = function () { return Product.find({ _id: prodID })};
-                    let addProd2 = addProd();
-                    console.group(addProd);
-
-                    addProd2.then(function(result) {
-                        products.push(result[0]);
-                        i++;
-                        if (i == productsNum) {
-                            //console.log("product-------"+ i +" " + products);
-                            //console.log(typeof products)
-                            //response.send(JSON.stringify({product:products}));
-                            response.json(JSON.stringify({"products": products}));
-                        }
-                        //console.log("OUTSIDE-"+ products);
-                    })
-                    
-                }
-            }
-
-                /*
-                categories[0].products.forEach( async (element) => {
-                    //console.log(element.valueOf())    
-                    let prodID = element.toString();
-                    //console.log(typeof prodID + ": " + prodID);
-                    let addProd = await Product.find({ _id: prodID });
-                    //console.log(addProd[0]);
-                    products.push(await addProd);
-                    //console.log("product-"+ products);
-                });*/
-            /*const addProd = async (array2) => {
-                for (let element of array2) {
-                    //console.log(element.valueOf())    
-                    let prodID = element.toString();
-                    //console.log(typeof prodID + ": " + prodID);
-                    let addProd = await Product.find({ _id: prodID });
-                    //console.log(addProd[0]);
-                    products.push(await addProd);
-                    i++;
-                    if (i == productsNum) {
-                        console.log("product-"+ products);
-                        response.send(products);
-                    }
-                    
-                }
-            }*/
-
-            //console.log(productsMongo());
-            //console.group(addProd());
-            
-        
-        }
-    }
-
     /* Load admin page by getting collection of products from mongodb and sending it to client to load page */
     loadAdmin(request, response) {
-        let result;
-        const productsMongo = async () => {
-            result = await Product.find();
-            //console.log(result);
-            //const categories = await Category.find({}, {products: 1});
-            //console.log(categories);
-            response.json(result);
-        };
-        productsMongo();
 
         let products = [
             {
@@ -291,8 +172,7 @@ export default class Controller {
         ]
         //console.log("ARRAY");
         //console.log(products);
-
-        //response.json(products);
+        response.json(products);
 
     }
 
@@ -380,7 +260,6 @@ export default class Controller {
         response.send(request.body);
         console.log("POST SUCCESS! Removed Product's ID: " + JSON.stringify(request.body));
 
-
     }
 
     /* Get product information by client sending requested product id to server. Server can then access mongodb and get product */
@@ -394,7 +273,6 @@ export default class Controller {
             price: 25.0,
             image: "./assets/greatsword.png"
         })
-        console.log(response);
     }
 
     /* Edit product information by client sending new changes as a product object to update product in mongodb */
