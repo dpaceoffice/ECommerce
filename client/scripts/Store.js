@@ -1,11 +1,12 @@
 
-// ADMINISTRATION window.onload = init();
+window.onload = init();
 post = function (url, data) {
     return fetch(url, { method: "POST", headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
 }
 
 function init() {
     getStore();
+    console.log("store uploaded");
     //getCheckout();
 }
 async function getStore(cat = undefined) {
