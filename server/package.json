@@ -9,13 +9,13 @@
         "start": "npm install && node app"
     },
     "dependencies": {
+        "auto-bind": "^5.0.1",
         "cors": "*",
         "dotenv": "*",
         "express": "*",
         "mongoose": "^6.3.2",
-        "shortid": "*",
-        "auto-bind": "^5.0.1",
         "muuri": "^0.9.5",
+        "shortid": "*",
         "web-animations-js": "^2.3.2"
     }
 }
