@@ -1,7 +1,7 @@
 
 window.onload = init();
-post = function (url, data) {
-    return fetch(url, { method: "POST", headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+post = async function (url, data) {
+    return await fetch(url, { method: "POST", headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
 }
 
 function init() {
@@ -11,7 +11,20 @@ function init() {
 async function getStore(cat = undefined) {
     const response = await fetch(`http://localhost:3000/store-data`);
     const data = await response.json();
+    const authenticated = (data.user != undefined);
+    console.log(data);
     displayStore(data.cstate, data.pstate, cat)
+    displayOptions(authenticated);
+}
+
+async function handleLogin() {
+    let email = document.getElementById('email').value;
+    let password = document.getElementById('password').value;
+    const info = { email: email, password: password };
+    console.log(info);
+    const response = await post(`http://localhost:3000/login/`, info);
+    const data = await response.json();
+    console.log(data);
 }
 
 async function sendActiveCat(attributes) {
