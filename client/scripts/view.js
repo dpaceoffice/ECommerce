@@ -118,9 +118,32 @@ function showLogin(){
     }
 }
 
-const displayCheckout = (body, total, checkout) => {
-    document.getElementById("checkout").innerHTML = checkout
-    document.getElementById("cart-body").innerHTML = body;
-    document.getElementById("cost-label").innerHTML = total;
-    addController('rmfromcart');
+function showRegister(){
+    const content = document.getElementById('modal-content');
+    content.innerHTML = `<div class="modal-header" style="background-color: #d2e2d8;">
+    <h5 class="modal-title" id="staticBackdropLabel">Register</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body flex">
+        <div> 
+            <label for='email'>Username: </label>
+            <input type='text' id='registerName' placeholder='Username'>
+        </div>
+        <br>
+        <div>
+            <label for='email'>Email: </label>
+            <input type='email' id='registerEmail' placeholder='Email'>
+        </div>
+        <br>
+        <div>
+            <label for='email'>Password: </label>
+            <input type='password' id='registerPassword' placeholder='Password'>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <p class="bi-text-left me-5">Already have an account? <a id="show-login" onclick=showLogin() href="#">Login here.</a></p>
+        <!--<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>-->
+        <button id="register-button" type="button" class="btn" style="background-color: #709a71;">Register</button>
+    </div>`;
+    addController("register-button");
 }
