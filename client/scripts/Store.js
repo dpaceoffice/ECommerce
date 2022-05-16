@@ -55,3 +55,10 @@ async function getCheckout() {
     console.log(body, total, cart)
     displayCheckout(body, total, cart);
 }
+async function handleRegister() {
+    const config = new Object();
+    config.method = "POST";
+    config.headers = { 'Content-Type': 'application/json' };
+    config.body = JSON.stringify({ 'name': registerName.value, 'email': registerEmail.value, 'password': registerPassword.value });
+    await fetch("http://localhost:3000/register", config);
+}
