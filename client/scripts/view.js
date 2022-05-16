@@ -81,6 +81,19 @@ const displayOptions = (authenticated) => {
         data-bs-target="#staticBackdrop">
         <i id='checkout-button' class="bi bi-cart"> </i>Login
         </button>`;
+        showLogin();
+    }
+}
+
+const displayCheckout = (body, total, checkout) => {
+    document.getElementById("checkout").innerHTML = checkout
+    document.getElementById("cart-body").innerHTML = body;
+    document.getElementById("cost-label").innerHTML = total;
+    addController('rmfromcart');
+}
+
+function showLogin(){
+    const content = document.getElementById('modal-content');
         content.innerHTML = `<div class="modal-header" style="background-color: #d2e2d8;">
         <h5 class="modal-title" id="staticBackdropLabel">Login</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
