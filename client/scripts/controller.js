@@ -2,7 +2,8 @@ const getCallbacks = () => ({
     'cat_id': sendActiveCat,
     'addtocart': addProductToCart,
     'rmfromcart': removeProductFromCart,
-    'login-button': handleLogin
+    'login-button': handleLogin,
+    'register-button': handleRegister
 });
 const addController = function (...buttonIDs) {
     const callbacks = getCallbacks();
