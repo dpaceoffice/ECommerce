@@ -32,7 +32,8 @@ const adminAddController = async function (...adminButtonIDs) {
                 console.log("CLICKED! "+ id);
                 if (id == "saveOrder") {
                     console.log("LAYOUT___:" + window.localStorage.getItem('prodIdlayout'))
-                    await adminCallbacks[id](window.localStorage.getItem('prodIdlayout'))
+                    let curCat = await document.getElementById("view").getAttribute("cat");
+                    await adminCallbacks[id](window.localStorage.getItem('prodIdlayout'), curCat)
                 } else {
                     await adminCallbacks[id](element.attributes)
                 }
