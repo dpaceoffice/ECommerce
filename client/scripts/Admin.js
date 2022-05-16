@@ -4,27 +4,56 @@ window.onload = (event) => {
 }
 
 /* Sends the new order of the products based on the products' ids by posting*/
-async function postLayout(order) {
+async function postLayout(order, curCat) {
     const url = 'http://localhost:3000/admin/rearrangeLayout';
     console.log("TYPE-----" + typeof order);
-    console.log(JSON.parse(order));
-    return await fetch(url,
-        {
-            method: 'POST',
-            body: JSON.stringify(JSON.parse(order)),
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            }
+    console.log("TYPE-----" + typeof curCat);
+    console.log(curCat);
+    let jsonOrder = JSON.parse(order);
+    //let jsonCurCat = await JSON.parse(curCat);
+    let package = {
+        order: jsonOrder,
+        curCat: curCat
+    }
 
-        }
-    )
-        .then(checkStatus)
-        .then(() => { reloadAdminPage(); console.log("reload"); })
+    if (order == null) {
+        console.log("null");
+    } else {
+        return await fetch(url,
+            {
+                method: 'POST',
+                body: JSON.stringify(package),
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                }
+
+            }
+        )
+            .then(checkStatus)
+            .then(async () => {
+                await loadAdminPage().then(() => { console.log("Add reload") })
+                await clearGrid();
+                await reloadAdminPage();
+                //reloadAdminPage(); /*console.log("reload");*/ 
+            })
+            .then(async () => {
+                const requestedCategory = new Object();
+                let element = document.getElementById("view");
+                requestedCategory.id = element.getAttribute('cat');
+                requestedCategory.type = element.getAttribute('type')
+                console.log(requestedCategory.id);
+                console.log(requestedCategory.type);
+                var result = await (postCategoryProducts(requestedCategory)).cancel;
+                console.log(result);
+            })
+    }
 }
 
 /* Remove a product by posting the product id to the server */
 async function postRemove(attributes) {
+    let curCategory = document.getElementById("view").getAttribute("cat");
+    //console.log("CURRENT: " + curCategory);
     const url = 'http://localhost:3000/admin/removeProduct';
     // Muuri specific: const postData = await removeOldProduct(e);
     //console.log("REMOVE PRODUCT!");
@@ -43,17 +72,35 @@ async function postRemove(attributes) {
     )
         .then(checkStatus)
         .then(() => { /*console.log('updated!!!'); console.log(JSON.stringify({ id: postData }))*/ })
-        .then(() => { reloadAdminPage(); /*console.log("reload");*/ })
+        .then(async () => {
+            await loadAdminPage().then(() => { console.log("Add reload") })
+            await clearGrid();
+            await reloadAdminPage();
+            //reloadAdminPage(); /*console.log("reload");*/ 
+        })
+        .then(async () => {
+            const requestedCategory = new Object();
+            let element = document.getElementById("view");
+            requestedCategory.id = element.getAttribute('cat');
+            requestedCategory.type = element.getAttribute('type')
+            console.log(requestedCategory.id);
+            console.log(requestedCategory.type);
+            var result = await (postCategoryProducts(requestedCategory)).cancel;
+            console.log(result);
+        })
 }
 
 /* Adding a new product by posting the product information to the server as JSON */
-async function postNewProduct(postData) {
+async function postNewProduct(postData, curCat) {
     const url = 'http://localhost:3000/admin/addProduct';
     array = [postData];
+    console.log(postData);
+    console.log(curCat);
+    //console.log(JSON.stringify([postData, curCat]))
     return await fetch(url,
         {
             method: 'POST',
-            body: JSON.stringify(postData),
+            body: JSON.stringify([postData, curCat]),
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
@@ -61,9 +108,23 @@ async function postNewProduct(postData) {
         }
     )
         .then(checkStatus)
-        .then(() => { console.log('updated!!!'); console.log(postData); console.log(array[0]) })
-        .then(() => { reloadAdminPage(); console.log("reload"); })
-    //.then(() => { addNewProduct(array) })
+        .then(() => { /*console.log('updated!!!'); console.log(JSON.stringify({ id: postData }))*/ })
+        .then(async () => {
+            await loadAdminPage().then(() => { console.log("Add reload") })
+            await clearGrid();
+            await reloadAdminPage();
+            //reloadAdminPage(); /*console.log("reload");*/ 
+        })
+        .then(async () => {
+            const requestedCategory = new Object();
+            let element = document.getElementById("view");
+            requestedCategory.id = element.getAttribute('cat');
+            requestedCategory.type = element.getAttribute('type')
+            console.log(requestedCategory.id);
+            console.log(requestedCategory.type);
+            var result = await (postCategoryProducts(requestedCategory)).cancel;
+            console.log(result);
+        })
 }
 
 /* Editing product by posting new product information to the server as JSON */
@@ -81,8 +142,22 @@ async function postEditProduct(postData) {
         }
     )
         .then(checkStatus)
-        .then(() => { console.log('editted update!!!'); console.log(array[0]) })
-        .then(() => { reloadAdminPage(); console.log("reload"); })
+        .then(async () => {
+            await loadAdminPage().then(() => { console.log("Add reload") })
+            await clearGrid();
+            await reloadAdminPage();
+            //reloadAdminPage(); /*console.log("reload");*/ 
+        })
+        .then(async () => {
+            const requestedCategory = new Object();
+            let element = document.getElementById("view");
+            requestedCategory.id = element.getAttribute('cat');
+            requestedCategory.type = element.getAttribute('type')
+            console.log(requestedCategory.id);
+            console.log(requestedCategory.type);
+            var result = await (postCategoryProducts(requestedCategory)).cancel;
+            console.log(result);
+        })
 }
 
 
@@ -145,44 +220,48 @@ async function postCategoryProducts(category) {
     const data = await response.json();
     let jsonData;
     let jsonDataLength;
-    console.log(Object.keys(data).length)
+    let idData;
+    console.log(typeof data);
+    jsonData = JSON.parse(data);
+    console.log("DATAAAAA");
+    console.log(jsonData.result)
+    console.log(jsonData.result[0].products);
+    console.log(jsonData.result[1].id);
+    console.log(jsonData.result.length);
+    //console.log(data);
+    //jsonDataLength = jsonData.products.length;
+    //console.log(jsonDataLength + "LEEEENGTH");
+    //console.log("Category ID: " + category.id);
+    //console.log("Category Type: "+ category.type);
+
+
+    if (document.getElementById("view").getAttribute("cat") != "-100" && Object.keys(data).length != 1) {
+        console.log("RELOADDDING!");
+        console.log(Object.keys(data).length)
+        console.log(Object.keys(data))
+        console.log(document.getElementById("view").getAttribute("cat"))
+        reloadAdminPage();
+        clearGrid();
+    }
+
     if (Object.keys(data).length > 1) {
         console.log(">1");
         jsonData = JSON.parse(data);
-        jsonDataLength = jsonData.products.length;
+        //jsonDataLength = jsonData.products.length;
 
         console.log("SUCCESS!");
-        console.log(JSON.parse(data));
-        console.log(jsonData.products);
+        //console.log(data);
+        //console.log(JSON.parse(data));
+        //console.log(jsonData.products);
+        //console.log(jsonDataLength);
         //reloadAdminPage();
-        viewAdminPage(jsonData.products, category.id, category.type);
-    } else if (Object.keys(data).length == 1) {
-        if (document.getElementById("view").getAttribute("cat") != "-100") {
-            reloadAdminPage();
-        }
-        viewAdminPage([], data.id, category.type)
-    } else {
-        console.log("Fail")
-    }
 
-    if (jsonDataLength != 0) {
-        console.log("SUCCESS!");
-        console.log(JSON.parse(data));
-        console.log(jsonData.products);
-        //reloadAdminPage();
-        viewAdminPage(jsonData.products, category.id, category.type);
-    } else if (jsonDataLength == 0) {
-        //console.log("ID-------------"+JSON.parse(data).id)
-        reloadAdminPage();
-        viewAdminPage([], jsonData.id, category.type)
+        viewAdminPage(jsonData.result[0].products, jsonData.result[1].id, category.type);
     } else {
-        console.log("FAIL!");
+        console.log("Fail");
     }
-    //console.log(data);
     return data;
-
 }
-// .then(() => { reloadAdminPage(); console.log("reload"); })
 
 /* Get product's information by get request and sending product id */
 async function getProductById(id) {
@@ -193,7 +272,7 @@ async function getProductById(id) {
     if (data) {
         console.log("SUCCESS!");
         console.log(data);
-        
+
     } else {
         console.log("FAIL!");
     }
@@ -216,7 +295,8 @@ const submitEvent = function () {
     }
     console.log(formData);
     console.log(document.getElementById("view").getAttribute("cat"));
-    postNewProduct(formData);
+    var currentCat = document.getElementById("view").getAttribute("cat");
+    postNewProduct(formData, currentCat);
     window.localStorage.setItem("formData", JSON.stringify(formData))
 }
 
@@ -232,7 +312,7 @@ const editEvent = function (attributes) {
     postEditProduct(editData);
 }
 
-
+// Receive product information by id from server to allow client to edit the information
 const editProductGetID = async function (attributes) {
     console.log("Clicking Edit");
     let product = await getProductById(attributes.product_number.nodeValue);
@@ -245,6 +325,7 @@ const editProductGetID = async function (attributes) {
     document.getElementById("editProduct-price").value = product.price;
 }
 
+// upload the category options
 const addCategoryOptions = function (data) {
     var mySelect = document.getElementById("mySelect");
     mySelect.innerHTML = "";
@@ -261,12 +342,13 @@ const addCategoryOptions = function (data) {
         option.setAttribute("id", element._id)
         option.setAttribute("type", element.type)
         option.innerHTML = element.type;
-        console.log(element._id);
+        //console.log(element._id);
         mySelect.add(option);
     });
 
 }
 
+// upload the category's product by sending request (view existing category or create a new one) then view the products
 const getProductsByCat = function () {
     const select = document.getElementById("mySelect");
     const value = select.options[select.selectedIndex];
@@ -285,8 +367,11 @@ const getProductsByCat = function () {
     } else {
         requestedCategory.id = value.getAttribute('id');
         requestedCategory.type = value.getAttribute('type')
+        console.log("requestedCat: "+ requestedCategory.id);
+        console.log("requestedType: " + requestedCategory.type);
     }
 
+    // load the products to the screen
     let categoryProducts = postCategoryProducts(requestedCategory).cancel;
     console.log(categoryProducts);
     //viewAdminPage(categoryProducts);
