@@ -93,14 +93,13 @@ const categories = () => {
     )
     adminAddController("categoryBut");
     adminAddController("categoryDecisionBut");
+    
 }
 
 /* Reloads the page after a product is added, removed, edited, or the order of the products have changed - NECCESSARY*/
-/*
-        
-*/
 const renderViewDOM = (html) => document.getElementById("view").innerHTML = html;
 const reloadAdminPage = function () {
+    grid.refreshItems();
     renderViewDOM(``);
     renderViewDOM(`
         <div id="addProduct"></div>
@@ -108,10 +107,9 @@ const reloadAdminPage = function () {
         <div class="grid container-fluid" id="muuri"></div>
     `)
     grid.refreshItems();
-    loadAdminPage();
 }
 
-/* Loads Page */
+/* Loads Admin Page */
 const viewAdminPage = (data, catId, catType) => {
     document.getElementById("view").setAttribute("cat", catId);
     document.getElementById("view").setAttribute("type", catType);
