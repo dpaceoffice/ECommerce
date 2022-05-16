@@ -18,6 +18,10 @@ export default class Router {
         /**Login */
         router.post('/login', controller.login);
 
+        /**Register*/
+        router.post('/register', controller.register);
+        router.get('/customer-data', controller.getCustomerData);
+
         /**Expects category id in post body*/
         router.post('/category', controller.getCategory);
         router.post('/category/products', controller.getProducts);
