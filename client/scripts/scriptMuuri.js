@@ -1,5 +1,3 @@
-//initGrid();
-// https://codepen.io/ljgilm/pen/oNEbKKE?editors=0010
 
 var grid = null;
 
@@ -22,33 +20,8 @@ var filterOptions = ['red', 'blue', 'green'];
 var characters = 'abcdefghijklmnopqrstuvwxyz';
 
 
-/*function sort() {
-    // Do nothing if sort value did not change.
-    //var currentSort = sortField.value;
-    currentSort = "order"
-    //if (sortFieldValue === currentSort) {
-    //    return;
-    //}
-    // If we are changing from "order" sorting to something else
-    // let's store the drag order.
-    if (sortFieldValue === 'order') {
-        dragOrder = grid.getItems();
-    }
-    // Sort the items.
-    /*grid.sort(
-        currentSort === 'title' ? compareItemTitle :
-            currentSort === 'color' ? compareItemColor :
-                dragOrder
-    ); //
-    // Update indices and active sort value.
-    updateIndices();
-    sortFieldValue = currentSort;
-}*/
-
 function addNewProduct(data) {
     //console.log("START ADDING");
-    //console.log(gridElement);
-    // Generate new elements.
     var newElems = generateElements(data, 1);
     // Set the display of the new elements to "none" so it will be hidden by
     // default.
@@ -69,8 +42,6 @@ function addNewProduct(data) {
     //filter();
     saveLayout(grid);
     grid.refreshItems();
-    //console.log(grid);
-    //console.log("Finish Adding");
 
 }
 
@@ -93,9 +64,6 @@ function removeOldProduct(e) {
     });
     updateIndices();
     console.log("inside remove");
-    //console.log(elem.getAttribute("data-id"))
-    //console.log(document.querySelectorAll('[data-id="' + elem.getAttribute("data-id") + '"]'));
-    //console.log(grid);
 
     return (elem.getAttribute('data-prodid'));
 }
@@ -110,8 +78,6 @@ function updateIndices() {
 }
 
 function generateElements(data, amount) {
-    //console.log("DATA");
-    //console.log(data[0]);
 
     // reloading the pages after changes
     uuid = 0;
@@ -127,6 +93,7 @@ function generateElements(data, amount) {
         var description = data[i].des;
         var price = data[i].price;
         var image = data[i].image;
+        // .match(/[\w-]+\.(jpg|png|gif)/g)
         var color = 'green'; //getRandomItem(filterOptions);
         var width = Math.floor(Math.random() * 2) + 1;
         var height = Math.floor(Math.random() * 2) + 1;
@@ -139,7 +106,7 @@ function generateElements(data, amount) {
             '<div class="card mb-3" style="width: 16rem; height:35 rem; background-color: #709a71; border-style: none;">' +
 
             '<div class="card-id">' + id + '</div>' +
-            '<a class="item-pic" target="_blank"><img class="card-img-top" id= "productImg" style="width: 17rem; height: 12rem; justify-content: center;" src="' + image + '" alt="' + image.match(/[\w-]+\.(jpg|png|gif)/g) + '"></a>' +
+            '<a class="item-pic" target="_blank"><img class="card-img-top" id= "productImg" style="width: 17rem; height: 12rem; justify-content: center;" src="' + image + '" alt="' + image + '"></a>' +
             
             '<div class = "card-body"'+
             '<div class="card-title"> <p class = "titleStyle">' + title + '</p></div>' +
@@ -158,8 +125,6 @@ function generateElements(data, amount) {
         itemElem.innerHTML = itemTemplate;
         ret.push(itemElem.firstChild);
 
-        //            '<button class="btn editProduct" id= "wantToEditBut" style="background-color:#709a71;" data-bs-toggle="modal" data-bs-target="#editProductModal" data-bs-whatever="@getbootstrap" product_number= "' + prodID+ '"> Edit </button>' +
-
     }
 
     return ret;
@@ -173,10 +138,6 @@ function destroyGrid() {
 
 function initGrid(data) {
     var dragCounter = 0;
-
-    //console.log("DATA");
-    //console.log(data);
-    // for reload
     const elemNum = Object.keys(data).length;
     console.log("ELEM_NUM: "+elemNum);
     gridElement = document.querySelector('.grid');
@@ -214,28 +175,17 @@ function initGrid(data) {
         }
     })
 
-    
-    //console.log(grid);
-    //console.log("RELOAD: " + Object.values(grid));
-    //console.log("RELOAD");
-    //console.log(grid.getID());
-
     sortFieldValue = 'order';
 
     var layout = window.localStorage.getItem('layout');
     if (layout) {
-        //console.log("LOOOOOOOOOOOOOAAAAAAAAAAAAAAAD");
-        //console.log(grid)
-        //console.log("LOCAL: " + window.localStorage.layout);
-        
-        // figuring out reloading page issue when going to clear and reload page
-        //loadLayout(grid, layout);
     } else {
         grid.layout(true);
     }
-    //console.log("START");
-    //console.log(grid);
+}
 
+let clearGrid = () => {
+    grid.refreshItems();
 }
 
 function serializeLayout(grid) {
@@ -258,9 +208,6 @@ function serializeProdIdLayout(grid) {
 
 // REARRANGE LAYOUT!!!! MANGO
 function saveLayout(grid) {
-
-    //var layout = serializeLayout(grid);
-    //window.localStorage.setItem('layout', layout);
 
     var prodIdLayout = serializeProdIdLayout(grid);
     window.localStorage.setItem('prodIdlayout', prodIdLayout);
@@ -294,10 +241,7 @@ function loadLayout(grid, serializedLayout) {
 
 function elementMatches(element, selector) {
     var p = Element.prototype;
-    //console.log("P: ----------------------------");
-    //console.log(p);
-    //console.log(p.matches || p.matchesSelector || p.mozMatchesSelector || p.msMatchesSelector || p.oMatchesSelector).call(element, selector);
-    // p.webkitMatchesSelector - deprecated
+
     return (p.matches || p.matchesSelector || p.mozMatchesSelector || p.msMatchesSelector || p.oMatchesSelector).call(element, selector);
 
 }
@@ -324,86 +268,3 @@ function elementClosest(element, selector) {
             //e.preventDefault();
         });
     });
-
-
-    /*const componentMuuri = (dataId, productURL, imagePath, titleName, desc, price, productNum) =>
-
-    `
-    <div class="item" data-id="${dataId}">
-        <div class="item-content">
-        <div class="card mb-3"
-            style="filter: drop-shadow(7px 7px 0px #597658); width: 18rem; height:35 rem; border-width: thick; border-style: solid; border-color: #709a71; background-color: #709a71;">
-            <a class="item-pic" href="${productURL}" target="_blank"><img class="card-img-top" style="width: 18rem" src="${imagePath}" alt="${title}"></a>
-            <div class="card-body">
-            <h5 class="card-title" ;>${titleName}</h5>
-            <p class="card-text">${price}</p>
-            <a class="btn" style="background-color:#709a71;" id="addtocart" product_number=${productNum}>Add to Cart</a>
-            </div>
-        </div>
-        </div>
-    </div> 
-    `
-    ;*/
-
-    /*
-
-        var itemTemplate = '' +
-            '<div class="item h' + height + ' w' + width + ' ' + color + '" data-id="' + id + '" data-color="' + color + '" data-title="' + title + '">' +
-            '<div class="item-content">' +
-            '<div class="card">' +
-            '<div class="card-id">' + id + '</div>' +
-            '<div class="card-title">' + title + '</div>' +
-            '<div class="card-remove"><i class="material-icons">&#xE5CD;</i></div>' +
-            '</div>' +
-            '</div>' +
-            '</div>';
-
-function generateElements(amount) {
-
-    var ret = [];
-
-    for (var i = 0, len = amount || 1; i < amount; i++) {
-        
-        //console.log("1st ID: " + id);
-        var id = ++uuid;
-        //console.log("2nd ID: " + id);
-        var color = 'green'; //getRandomItem(filterOptions);
-        var title = "Longbow"; //generateRandomWord(2);
-        var width = Math.floor(Math.random() * 2) + 1;
-        var height = Math.floor(Math.random() * 2) + 1;
-        var itemElem = document.createElement('div');
-        var description = "Muuri creates responsive, sortable, filterable and draggable layouts. Comparing to what's out there Muuri is a combination of Packery, Masonry, Isotope and Sortable.";
-        /*var itemTemplate = '' +
-            '<div class="item h' + height + ' w' + width + ' ' + color + '" data-id="' + id + '" data-color="' + color + '" data-title="' + title + '">' +
-            '<div class="item-content">' +
-            '<div class="card">' +
-            '<div class="card-id">' + id + '</div>' +
-            '<div class="card-title">' + title + '</div>' +
-            '<div class="card-remove"><i class="material-icons">&#xE5CD;</i></div>' +
-            '</div>' +
-            '</div>' +
-            '</div>';*/
-
-//    var itemTemplate = '' +
-//    '<div class="item" data-id="' + id + '" data-title="' + title + '" style= "filter: drop-shadow(7px 7px 0px #597658); width: 18rem; height:35 rem; border-width: thick; border-style: solid; border-color: #709a71; background-color: #709a71;">' +
-//    '<div class="item-content">' +
-//    '<div class="card mb-3" style="width: 16rem; height:35 rem; background-color: #709a71; border-style: none;">' +
-//    '<div class="card-id">' + id + '</div>' +
-//    '<a class="item-pic" href="https://www.google.com/" target="_blank"><img class="card-img-top" style="width: 16rem; justify-content: center;" src="assets/crossbow.png" alt="bow"></a>'+
-//    '<a class="btn" style="background-color:#709a71;" id="addtocart" product_number=100>Add to Cart</a> </div>' +
-//    '<div class="card-title">' + title + '</div>' +
-//    '<p class="card-text">' + description + '</p>' + 
-//    '<p class="card-text"> $5.00 </p>' + 
-//    '<div class="card-remove" ><button class="btn removeProdBut"><i class="material-icons">&#xE5CD;</i></div></button>' +
-//    '</div>' +
-//    '</div>' +
-//    '</div>';
-
-//itemElem.innerHTML = itemTemplate;
-//ret.push(itemElem.firstChild);
-
-//}
-
-//return ret;
-
-//}*/
