@@ -57,22 +57,21 @@ export default class Controller {
     login(request, response, next) {
         const { email, password } = request.body;
         let session = request.session.id;
-        console.log(request.body);
-        console.log(request.session.id);//express
+        console.log(session);//express
 
-        //const config = {};
-        //config.successRedirect = '/';
-        //config.failureRedirect = '/login';
-        //const authHandler = passport.authenticate('local', config);
-        //authHandler(request, response, next);//passes body into passport
-        response.json({ email, password, session });
-    }
+        passport.authenticate('local', (err, user, info) => {
+            if (err) { return next(err); } //error exception
 
-    getCarts(request, response) {
-        const carts = this.getStore().getCustomer().getCarts();
-        const html = this.getStore().getCustomer().getHtml();
-        const data = { carts, html }
-        response.json(data)
+            // user will be set to false, if not authenticated
+            if (!user) {
+                response.status(401).json(info); //info contains the error message
+            } else {
+                // if user authenticated maintain the session
+                request.logIn(user, function () {
+                    response.status(200).json(info);
+                })
+            }
+        })(request, response, next);
     }
     async test(request, response) {
         await Store.createCustomer(
