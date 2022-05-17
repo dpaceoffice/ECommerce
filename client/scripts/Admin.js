@@ -6,11 +6,7 @@ window.onload = (event) => {
 /* Sends the new order of the products based on the products' ids by posting*/
 async function postLayout(order, curCat) {
     const url = 'http://localhost:3000/admin/rearrangeLayout';
-    console.log("TYPE-----" + typeof order);
-    console.log("TYPE-----" + typeof curCat);
-    console.log(curCat);
     let jsonOrder = JSON.parse(order);
-    //let jsonCurCat = await JSON.parse(curCat);
     let package = {
         order: jsonOrder,
         curCat: curCat
@@ -35,17 +31,14 @@ async function postLayout(order, curCat) {
                 await loadAdminPage().then(() => { console.log("Add reload") })
                 await clearGrid();
                 await reloadAdminPage();
-                //reloadAdminPage(); /*console.log("reload");*/ 
             })
             .then(async () => {
                 const requestedCategory = new Object();
                 let element = document.getElementById("view");
                 requestedCategory.id = element.getAttribute('cat');
                 requestedCategory.type = element.getAttribute('type')
-                console.log(requestedCategory.id);
-                console.log(requestedCategory.type);
                 var result = await (postCategoryProducts(requestedCategory)).cancel;
-                console.log(result);
+                
             })
     }
 }
@@ -83,10 +76,9 @@ async function postRemove(attributes) {
             let element = document.getElementById("view");
             requestedCategory.id = element.getAttribute('cat');
             requestedCategory.type = element.getAttribute('type')
-            console.log(requestedCategory.id);
-            console.log(requestedCategory.type);
+ 
             var result = await (postCategoryProducts(requestedCategory)).cancel;
-            console.log(result);
+            //console.log(result);
         })
 }
 
@@ -94,8 +86,8 @@ async function postRemove(attributes) {
 async function postNewProduct(postData, curCat) {
     const url = 'http://localhost:3000/admin/addProduct';
     array = [postData];
-    console.log(postData);
-    console.log(curCat);
+    //console.log(postData);
+    //console.log(curCat);
     //console.log(JSON.stringify([postData, curCat]))
     return await fetch(url,
         {
@@ -120,10 +112,9 @@ async function postNewProduct(postData, curCat) {
             let element = document.getElementById("view");
             requestedCategory.id = element.getAttribute('cat');
             requestedCategory.type = element.getAttribute('type')
-            console.log(requestedCategory.id);
-            console.log(requestedCategory.type);
+ 
             var result = await (postCategoryProducts(requestedCategory)).cancel;
-            console.log(result);
+            //console.log(result);
         })
 }
 
@@ -153,12 +144,34 @@ async function postEditProduct(postData) {
             let element = document.getElementById("view");
             requestedCategory.id = element.getAttribute('cat');
             requestedCategory.type = element.getAttribute('type')
-            console.log(requestedCategory.id);
-            console.log(requestedCategory.type);
+ 
             var result = await (postCategoryProducts(requestedCategory)).cancel;
-            console.log(result);
+            //console.log(result);
         })
 }
+
+/* delete Category */
+async function deleteCategory(id) {
+    const url = 'http://localhost:3000/admin/deleteCategory';
+    const deleteCat = new Object();
+    deleteCat.id = id;
+    return await fetch(url,
+        {
+            method: 'POST',
+            body: JSON.stringify(deleteCat),
+            headers: { "Content-Type": "application/json" },
+        }
+    )
+        .then(checkStatus)
+        .then(async () => {
+            await loadAdminPage().then(() => { console.log("Add reload") })
+            await clearGrid();
+            await reloadAdminPage();
+            //reloadAdminPage(); /*console.log("reload");
+        })
+
+}
+
 
 
 // https://hartzis.me/fetch-post-express/
@@ -184,7 +197,6 @@ async function loadAdminPage() {
     const data = await response.json();
     if (data) {
         console.log("SUCCESS!");
-        console.log(data);
         //startPage();
         localStorage.clear();
         //adminPage(data);
@@ -203,11 +215,21 @@ async function getCategoriesIds() {
     const url = `http://localhost:3000/admin/getCategoriesIds`;
     const response = await fetch(url);
     const data = await response.json();
-    console.log(response);
     if (data) {
-        console.log("Success Categories ID and Type:");
-        console.log(data);
         addCategoryOptions(data);
+    } else {
+        console.log("FAIL did not get categories or type")
+    }
+}
+
+/* get categories for deletion */
+async function getCategoriesForDelete() {
+    const url = `http://localhost:3000/admin/getCategoriesIds`;
+    const response = await fetch(url);
+    const data = await response.json();
+    //console.log(response);
+    if (data) {
+        deleteCategoryOptions(data);
     } else {
         console.log("FAIL did not get categories or type")
     }
@@ -219,27 +241,9 @@ async function postCategoryProducts(category) {
     const response = await fetch(url);
     const data = await response.json();
     let jsonData;
-    let jsonDataLength;
-    let idData;
-    console.log(typeof data);
-    jsonData = JSON.parse(data);
-    console.log("DATAAAAA");
-    console.log(jsonData.result)
-    console.log(jsonData.result[0].products);
-    console.log(jsonData.result[1].id);
-    console.log(jsonData.result.length);
-    //console.log(data);
-    //jsonDataLength = jsonData.products.length;
-    //console.log(jsonDataLength + "LEEEENGTH");
-    //console.log("Category ID: " + category.id);
-    //console.log("Category Type: "+ category.type);
-
 
     if (document.getElementById("view").getAttribute("cat") != "-100" && Object.keys(data).length != 1) {
         console.log("RELOADDDING!");
-        console.log(Object.keys(data).length)
-        console.log(Object.keys(data))
-        console.log(document.getElementById("view").getAttribute("cat"))
         reloadAdminPage();
         clearGrid();
     }
@@ -250,15 +254,15 @@ async function postCategoryProducts(category) {
         //jsonDataLength = jsonData.products.length;
 
         console.log("SUCCESS!");
-        //console.log(data);
-        //console.log(JSON.parse(data));
-        //console.log(jsonData.products);
-        //console.log(jsonDataLength);
-        //reloadAdminPage();
 
         viewAdminPage(jsonData.result[0].products, jsonData.result[1].id, category.type);
     } else {
-        console.log("Fail");
+        await loadAdminPage().then(() => { console.log("Add reload") })
+        await clearGrid();
+        await reloadAdminPage();
+        
+        viewAdminPage([], data.id._id, data.id.type);
+
     }
     return data;
 }
@@ -267,12 +271,10 @@ async function postCategoryProducts(category) {
 async function getProductById(id) {
     const url = `http://localhost:3000/admin/productById/${id}`;
     const response = await fetch(url);
-    console.log("getProdById: " + id + " | " + JSON.stringify(id.product_number));
+    //console.log("getProdById: " + id + " | " + JSON.stringify(id.product_number));
     const data = await response.json();
     if (data) {
         console.log("SUCCESS!");
-        console.log(data);
-
     } else {
         console.log("FAIL!");
     }
@@ -293,8 +295,8 @@ const submitEvent = function () {
     if (formData.image == "") {
         formData.image = "./assets/default_img.png";
     }
-    console.log(formData);
-    console.log(document.getElementById("view").getAttribute("cat"));
+    //console.log(formData);
+    //console.log(document.getElementById("view").getAttribute("cat"));
     var currentCat = document.getElementById("view").getAttribute("cat");
     postNewProduct(formData, currentCat);
     window.localStorage.setItem("formData", JSON.stringify(formData))
@@ -316,7 +318,7 @@ const editEvent = function (attributes) {
 const editProductGetID = async function (attributes) {
     console.log("Clicking Edit");
     let product = await getProductById(attributes.product_number.nodeValue);
-    console.log("Product info from server for editting " + product.id);
+    //console.log("Product info from server for editting " + product.id);
 
     // NEED TO GET PRODUCT'S INFORMATION - mongodb
     document.getElementById("editProduct-title").value = product.title;
@@ -348,16 +350,35 @@ const addCategoryOptions = function (data) {
 
 }
 
+const deleteCategoryOptions = function (data) {
+    var myDeleteSelect = document.getElementById("myDeleteSelect");
+    myDeleteSelect.innerHTML = "";
+
+    data.forEach(element => {
+        var option = document.createElement("option");
+        option.setAttribute("id", element._id)
+        option.setAttribute("type", element.type)
+        option.innerHTML = element.type;
+        myDeleteSelect.add(option);
+    });
+}
+
+/* Get id of category you want to delete */
+const getDeletedCateId = function () {
+    const select = document.getElementById("myDeleteSelect");
+    const value = select.options[select.selectedIndex];
+    deleteCategory(value.getAttribute('id'));
+}
+
+
 // upload the category's product by sending request (view existing category or create a new one) then view the products
 const getProductsByCat = function () {
     const select = document.getElementById("mySelect");
     const value = select.options[select.selectedIndex];
-    console.log(value.getAttribute('id'));
-    console.log(value.getAttribute('type'));
     //console.log(typeof value.getAttribute('id'));
 
     const newCategoryName = document.getElementById("createCategory").value;
-    console.log(newCategoryName);
+    //console.log(newCategoryName);
 
     const requestedCategory = new Object();
 
@@ -366,14 +387,12 @@ const getProductsByCat = function () {
         requestedCategory.type = newCategoryName;
     } else {
         requestedCategory.id = value.getAttribute('id');
-        requestedCategory.type = value.getAttribute('type')
-        console.log("requestedCat: "+ requestedCategory.id);
-        console.log("requestedType: " + requestedCategory.type);
+        requestedCategory.type = value.getAttribute('type');
     }
 
     // load the products to the screen
     let categoryProducts = postCategoryProducts(requestedCategory).cancel;
-    console.log(categoryProducts);
+    //console.log(categoryProducts);
     //viewAdminPage(categoryProducts);
 }
 
