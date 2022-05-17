@@ -6,7 +6,8 @@
     "main": "app.js",
     "type": "module",
     "scripts": {
-        "start": "npm install && node app"
+        "start": "npm install && node app",
+        "live": "nodemon server.js"
     },
     "dependencies": {
         "cors": "*",
@@ -16,6 +17,7 @@
         "shortid": "*",
         "express-session": "*",
         "passport": "*",
-        "passport-local": "*"
+        "passport-local": "*",
+        "node-fetch": "^3.2.1"
     }
 }
