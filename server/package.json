@@ -10,6 +10,7 @@
         "live": "nodemon server.js"
     },
     "dependencies": {
+        "auto-bind": "^5.0.1",
         "cors": "*",
         "dotenv": "*",
         "express": "*",
@@ -18,6 +19,8 @@
         "express-session": "*",
         "passport": "*",
         "passport-local": "*",
-        "node-fetch": "^3.2.1"
+        "node-fetch": "^3.2.1",
+        "muuri": "^0.9.5",
+        "web-animations-js": "^2.3.2"
     }
 }

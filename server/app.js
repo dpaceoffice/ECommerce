@@ -23,6 +23,7 @@ else {
 
 const app = express();
 const port = process.env.PORT | 3000;
+
 const routes = new Router().getRouter();
 function setupApp() {
     const sessionConfig = { secret: process.env.SECRET_SESSION, resave: false, saveUninitialized: true };
