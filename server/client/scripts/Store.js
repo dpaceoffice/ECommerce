@@ -5,6 +5,7 @@ post = async function (url, data) {
 async function init() {
     await getStore();
 }
+var paypalToggle = false;
 async function getStore(cat = undefined) {
     const response = await fetch(`http://localhost:3000/store-data`);
     const data = await response.json();
@@ -14,6 +15,10 @@ async function getStore(cat = undefined) {
     if (authenticated) {
         setCheckoutSize(data.count);
         setCartDisplay(data.details.allProducts, data.details.totalCost);
+        if (!paypalToggle) {
+            createPaypalButton();
+            paypalToggle = true;
+        }
     }
 }
 
