@@ -60,11 +60,18 @@ const displayCheckout = (body, total, checkout) => {
     addController('rmfromcart');
 }
 
+
 // Load Categories/ Create Categories
 const categories = () => {
     const renderCategoryDOM = (html) => document.getElementById("categoryPage").innerHTML = html;
     renderCategoryDOM(
+        `<div id="divider"></div>`
+        +
         `<button id="categoryBut" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleCateModal"> CATEGORIES </button>`
+        +
+        `<div><button id="deleteCategoryBut" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#deleteCateModal"> Delete Category </button></div>`
+        +
+        `<div id = "nameOfCat"></div>`
         +
         `<div class="modal fade" id="exampleCateModal" category_number = "-100" tabindex="-1" aria-labelledby="exampleCateModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -90,9 +97,33 @@ const categories = () => {
           </div>
         </div>
       </div>`
+      +
+      `<div class="modal fade" id="deleteCateModal" category_number = "-100" tabindex="-1" aria-labelledby="deleteCateModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="deleteCateModalLabel">Category</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <div class="mb-3">
+                  <label for="chooseOption" class="col-form-label">Delete Category</label>
+                  <select id="myDeleteSelect" class="form-select">
+                  </select>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button id="confirmDeleteCate" type="button" class="btn btn-secondary" data-bs-dismiss="modal"> Delete </button>
+          </div>
+        </div>
+      </div>
+    </div>`
     )
+
     adminAddController("categoryBut");
     adminAddController("categoryDecisionBut");
+    adminAddController("deleteCategoryBut");
+    adminAddController("confirmDeleteCate");
     
 }
 
@@ -119,6 +150,11 @@ const viewAdminPage = (data, catId, catType) => {
     const renderViewDOM = (html) => document.getElementById("view").innerHTML = html;
 
     initGrid(data);
+
+    if(document.getElementById("view").getAttribute("cat") != "-100") {
+        console.log("CHANGE TITLE!");
+        document.getElementById("nameOfCat").innerHTML = catType;
+    }
 
     renderEditDOM(
         `
