@@ -2,7 +2,6 @@ import Store from "../models/Store.js";
 import Product from "../models/Product.js";
 import Category from "../models/Category.js";
 import Customer from "../models/Customer.js";
-import Cart from "../models/Cart.js";
 import passport from "./passport.js";
 import path from 'path';
 
