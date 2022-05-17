@@ -50,6 +50,11 @@ export default class Store {
     return await newCustomer.save();
   }
 
+  static async getCustomer(id) {
+    const exists = await Customer.findOne({ _id: id })
+    return exists;
+  }
+
   static async findCustomer(email) {
     const exists = await Customer.find({ email: email })
     if (exists.length > 0) {
