@@ -18,12 +18,25 @@ export default class Store {
     });
     return await newProduct.save();
   }
+  static async findProduct(id) {
+    const exists = await Product.find({ _id: id })
+    if (exists.length > 0) {
+      return exists[0];
+    } else
+      return undefined
+  }
 
   static async createCustomer(name, email, password, rights = 0, carts = undefined, curCart = 0, curCtg = 0, htmlElement = undefined) {
     const exists = await Customer.find({ email: email })
     if (exists.length > 0) {
       return exists[0];
     }
+    const cart = await new Cart({
+      products: [],
+      quantities: {}
+    }).save();
+    if (carts == undefined)
+      carts = [cart];
     let newCustomer = new Customer({
       name: name,
       email: email,
