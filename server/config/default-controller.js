@@ -2,6 +2,7 @@ import Store from "../models/Store.js";
 import Product from "../models/Product.js";
 import Category from "../models/Category.js";
 import Customer from "../models/Customer.js";
+import Cart from "../models/Cart.js";
 import passport from "./passport.js";
 import path from 'path';
 
@@ -24,6 +25,15 @@ export default class Controller {
         return response.json({ products });
     }
     async getStoreData(request, response) {
+        let session = request.session.id;
+        //console.log(request.sessionStore);
+        //console.log(session);//express
+        await Store.createCustomer(
+            "David",
+            "david@test",
+            "password",
+            2
+        )
         var cstate = await Category.find({}, { _id: 1, type: 1, products: 1 });
         var pstate = await Product.find({}, { _id: 1, title: 1, price: 1, des: 1, image: 1 });
         const auth_user = request.user;
@@ -80,12 +90,6 @@ export default class Controller {
         })(request, response, next);
     }
     async test(request, response) {
-        await Store.createCustomer(
-            "David",
-            "david@test",
-            "password",
-            2
-        )
         const authenticated_user = request.user;
         if (authenticated_user == undefined || authenticated_user.rights < 2) {
             return response.sendStatus(403);
