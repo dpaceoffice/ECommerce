@@ -5,15 +5,12 @@ import Customer from "../models/Customer.js";
 async function authenticateUser(email, password, done) {
   const user = await Customer.findOne({ email: email });
   if (user == undefined) {
-    console.log("No user with that email");
-    return done(null, false);
+    return done(null, false, { message: "no user with that email" });
   }
   if (password == user.password) {
-    console.log("User Authenticated");
-    return done(null, user);
+    return done(null, user, { message: "user authenticated" });
   } else {
-    console.log("Password incorrect");
-    return done(null, false);
+    return done(null, false, { message: "password incorrect" });
   }
 }
 
