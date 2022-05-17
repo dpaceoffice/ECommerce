@@ -3,29 +3,14 @@ import Product from "../models/Product.js";
 import Category from "../models/Category.js";
 import Customer from "../models/Customer.js";
 import passport from "./passport.js";
+import path from 'path';
+
+const __dirname = path.resolve('client/');
 
 export default class Controller {
-    constructor() {
-
-    }
-    /*
-    async getStore() {
-        var store = await Store.find({});
-        if (store.length <= 0) {
-            return new Store({ products: [], categories: [], customers: [] }); //Create an instance of store, store componenet objects are temporarily, statically declared until persistant data is configured.
-        } else {
-            var model = store[0];
-            return model;
-        }
-    }*/
-
     getIndex(request, response) {
-        response.json({ success: true });
-    }
-    setCategory(request, response) {
-        const id = request.body.id;
-        this.getStore().setCurrentCategory(id);
-        response.json({ success: true, cat_id: id });
+        console.log(__dirname);
+        response.sendFile('index.html', { root: __dirname });
     }
 
     async getCategory(request, response) {
