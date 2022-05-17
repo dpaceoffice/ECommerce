@@ -125,3 +125,24 @@ const displayLoginAttempt = (message) => {
     }
 }
 
+const setCheckoutSize = (count) => {
+    if (count > 0)
+        document.getElementById("checkout").innerHTML = `<i id='checkout-button' class="bi bi-cart"> </i>Checkout - ${count}`;
+    else
+        document.getElementById("checkout").innerHTML = `<i id='checkout-button' class="bi bi-cart"> </i>Checkout`;
+}
+
+const setCartDisplay = (products, totalCost) => {
+    let body = `<p>The shopping cart is currently empty</p>`;
+    if (products.length > 0) {
+        body = ``;
+        for (product of products) {
+            body += `<p>${product.title} - ${product.price} x ${product.quantity} <button type="button" class="btn btn-sm btn-danger" id="rmfromcart" product_number=${product.id}>Remove</button></p>`;
+        }
+    }
+    var total = `Total Cost: ${totalCost}`;
+    document.getElementById("cart-body").innerHTML = body;
+    document.getElementById("cost-label").innerHTML = total;
+    addController('rmfromcart');
+}
+
