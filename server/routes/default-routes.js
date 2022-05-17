@@ -21,6 +21,10 @@ export default class Router {
         router.post('/category', controller.getCategory);
         router.post('/category/products', controller.getProducts);
 
+        /**Paypal EndPoints */
+        router.post('/api/orders', controller.getOrders);
+        router.post('/api/orders/:orderID/capture', controller.capturePayment);
+
         router.get('/test-add', controller.test);
     }
     getRouter() {
