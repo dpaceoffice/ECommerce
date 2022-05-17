@@ -106,3 +106,22 @@ const displayOptions = (authenticated) => {
         addController("login-button");
     }
 }
+const displayLoginAttempt = (message) => {
+    email_field = document.getElementById('email');
+    email_err = document.getElementById('email-error');
+    password_field = document.getElementById('password');
+    password_err = document.getElementById('password-error');
+    password_err.innerHTML = ``;
+    password_field.value = ``;
+    email_err.innerHTML = ``;
+    email_field.value = ``;
+    if (message.includes('email')) {
+        email_err.innerHTML = `That account doesn't exist!`;
+    } else if (message.includes('password')) {
+        password_err.innerHTML = `The password entered is incorrect!`;
+    } else {
+        document.getElementsByClassName('btn-close')[0].click();
+        init();
+    }
+}
+
