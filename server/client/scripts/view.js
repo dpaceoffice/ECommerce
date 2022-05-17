@@ -62,7 +62,7 @@ const displayOptions = () => {
     </button>`;
     content.innerHTML = `<div class="modal-header" style="background-color: #d2e2d8;">
     <h5 class="modal-title" id="staticBackdropLabel">Login</h5>
-    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <button type="button" id="login-modal-close" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>
     <div class="modal-body flex">
         <p class='text-danger' id='email-error'><p>
@@ -99,7 +99,7 @@ const displayLoginAttempt = (message) => {
     } else if (message.includes('password')) {
         password_err.innerHTML = `The password entered is incorrect!`;
     } else {
-        document.getElementsByClassName('btn-close')[0].click();
+        document.getElementById('login-modal-close').click();
         renderCart();
     }
 }
