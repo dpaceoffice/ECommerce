@@ -122,9 +122,6 @@ export default class Controller {
     }
 
     /* ADMINISTRATION CODE*/
-    // SERVER NEEDS TO ACCESS MONGODB TO MAKE CHANGES TO THE DATABASE
-
-
     // return list of categories ids and types
     getCategoriesIds(request, response) {
         const productsMongo = async () => {
@@ -321,6 +318,33 @@ export default class Controller {
             }
         )
         console.log(edit);
+    }
+
+    /* Delete categpry */
+    async deleteCategory(request,response) {
+        response.send(request.body);
+        console.log("POST SUCCESS! Delete Category!");
+        //console.log(request.body.id);
+        //console.log(typeof request.body.id);
+        const catID = request.body.id;
+
+        const requestedProductId = await Category.findOne({_id: catID}, {products: 1});
+        //console.log(requestedProductId);
+        //console.log(requestedProductId.products.length);
+
+        const length = requestedProductId.products.length;
+        
+
+        if (length == 0) {
+            await Category.deleteOne({_id: catID }).then(console.log("deleted category"));
+        } else {
+            const arrayProd = requestedProductId.products;
+            for await ( const element of arrayProd) {
+                await Product.deleteOne({_id: element}).then(console.log("product deleted"));
+            }
+            await Category.deleteOne({_id: catID }).then(console.log("deleted category"));
+        }
+
     }
 
     /*^^^^ ADMINISTRATION CODE ^^^^*/
