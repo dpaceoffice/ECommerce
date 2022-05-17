@@ -53,58 +53,38 @@ const displayStore = (categories, products, cat) => {
     addController('addtocart');
 }
 
-const displayOptions = (authenticated) => {
+const displayOptions = () => {
     const widget = document.getElementById('auth-status-button');
     const content = document.getElementById('modal-content');
-    widget.innerHTML = '';
-    if (authenticated) {
-        widget.innerHTML = `<button type="button" class="btn" style="color: white;" id="checkout" data-bs-toggle="modal"
-        data-bs-target="#staticBackdrop">
-        <i id='checkout-button' class="bi bi-cart"> </i>Checkout
-        </button>`;
-        content.innerHTML = `<div class="modal-header" style="background-color: #d2e2d8;">
-        <h5 class="modal-title" id="staticBackdropLabel">Shopping Cart</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    widget.innerHTML = `<button type="button" class="btn" style="color: white;" id="login-show" data-bs-toggle="modal"
+    data-bs-target="#staticBackdrop">
+    <i id='login-modal' class="bi bi-cart"> </i>Login
+    </button>`;
+    content.innerHTML = `<div class="modal-header" style="background-color: #d2e2d8;">
+    <h5 class="modal-title" id="staticBackdropLabel">Login</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body flex">
+        <p class='text-danger' id='email-error'><p>
+        <div>
+            <label for='email'>Email:</label>
+            <input type='email' id='email' name='email' required>
         </div>
-        <div id="cart-body" class="modal-body flex">
-            <p>The shopping cart is currently empty</p>
+        <br>
+        <p class='text-danger' id='password-error'><p>
+        <div>
+            <label for='password'>Password:</label>
+            <input type='password' id='password' name='password' required>
         </div>
-        <div class="modal-footer">
-            <p id="cost-label" class="bi-text-left me-5">Total Cost: $0.00
-            <p>
-                <!--<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>-->
-                <div id="paypal-button-container"></div>
-        </div>`;
-    } else {
-        widget.innerHTML = `<button type="button" class="btn" style="color: white;" id="login-show" data-bs-toggle="modal"
-        data-bs-target="#staticBackdrop">
-        <i id='checkout-button' class="bi bi-cart"> </i>Login
-        </button>`;
-        content.innerHTML = `<div class="modal-header" style="background-color: #d2e2d8;">
-        <h5 class="modal-title" id="staticBackdropLabel">Login</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body flex">
-            <p class='text-danger' id='email-error'><p>
-            <div>
-                <label for='email'>Email:</label>
-                <input type='email' id='email' name='email' required>
-            </div>
-            <br>
-            <p class='text-danger' id='password-error'><p>
-            <div>
-                <label for='password'>Password:</label>
-                <input type='password' id='password' name='password' required>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <p class="bi-text-left me-5">Don't have an account? Click here.<p>
-                <!--<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>-->
-                <button id="login-button" type="button" class="btn" style="background-color: #709a71;">Login</button>
-        </div>`;
-        addController("login-button");
-    }
+    </div>
+    <div class="modal-footer">
+        <p class="bi-text-left me-5">Don't have an account? Click here.<p>
+            <!--<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>-->
+            <button id="login-button" type="button" class="btn" style="background-color: #709a71;">Login</button>
+    </div>`;
+    addController("login-button");
 }
+
 const displayLoginAttempt = (message) => {
     email_field = document.getElementById('email');
     email_err = document.getElementById('email-error');
@@ -120,15 +100,40 @@ const displayLoginAttempt = (message) => {
         password_err.innerHTML = `The password entered is incorrect!`;
     } else {
         document.getElementsByClassName('btn-close')[0].click();
-        init();
+        renderCart();
     }
 }
 
-const setCheckoutSize = (count) => {
+const renderCart = () => {
+    const widget = document.getElementById('auth-status-button');
+    const content = document.getElementById('modal-content');
+
+    widget.innerHTML = `<button type="button" class="btn" style="color: white;" id="checkout" data-bs-toggle="modal"
+        data-bs-target="#staticBackdrop">
+        <i class="bi bi-cart"> </i>Checkout
+        </button>`;
+    content.innerHTML = `<div class="modal-header" style="background-color: #d2e2d8;">
+        <h5 class="modal-title" id="staticBackdropLabel">Shopping Cart</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div id="cart-body" class="modal-body flex">
+            <p>The shopping cart is currently empty</p>
+        </div>
+        <div class="modal-footer">
+            <p id="cost-label" class="bi-text-left me-5">Total Cost: $0.00
+            <p>
+                <!--<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>-->
+                <div id="paypal-button-container"></div>
+        </div>`
+    addController("checkout");
+}
+
+const setCheckout = (count) => {
     if (count > 0)
         document.getElementById("checkout").innerHTML = `<i id='checkout-button' class="bi bi-cart"> </i>Checkout - ${count}`;
     else
         document.getElementById("checkout").innerHTML = `<i id='checkout-button' class="bi bi-cart"> </i>Checkout`;
+
 }
 
 const setCartDisplay = (products, totalCost) => {
@@ -144,10 +149,15 @@ const setCartDisplay = (products, totalCost) => {
     document.getElementById("cost-label").innerHTML = total;
     addController('rmfromcart');
 }
-
-const createPaypalButton = () => {
-    document.getElementById('paypal-button-container').innerHTML = ``;
-    paypal
+var buttons;
+var hasRendered = false;
+async function createPaypalButton() {
+    //document.getElementById('paypal-button-container').innerHTML = ``;
+    if (buttons && buttons.close && hasRendered) {
+        buttons.close();
+        hasRendered = false;
+    }
+    buttons = paypal
         .Buttons({
             fundingSource: paypal.FUNDING.PAYPAL,
             // Sets up the transaction when a payment button is clicked
@@ -189,7 +199,25 @@ const createPaypalButton = () => {
                         // Or go to another URL:  actions.redirect('thank_you.html');
                     });
             },
+        });
+    await buttons.render('#paypal-button-container')
+        .then(() => {
+            hasRendered = true;
         })
-        .render("#paypal-button-container");
+        .catch((err) => {
+            let selector = document.querySelector('#paypal-button-container');
+
+            // button failed to render, possibly because it was closed or destroyed.
+            if (selector && selector.children.length > 0) {
+                // still mounted so throw an error
+                console.log("Paypal failed to render properly");
+                //throw new Error(err);
+            }
+
+            // not mounted anymore, we can safely ignore the error
+            return;
+
+
+        });
 }
 
