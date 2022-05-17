@@ -26,6 +26,7 @@ const port = process.env.PORT | 3000;
 const routes = new Router().getRouter();
 function setupApp() {
     app.use(cors());
+    app.use(express.static('client'))
     app.use(bodyParser.json());
     const sessionConfig = { secret: process.env.SECRET_SESSION, resave: false, saveUninitialized: true };
     app.use(session(sessionConfig));
