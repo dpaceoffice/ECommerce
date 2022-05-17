@@ -32,6 +32,7 @@ export default class Router {
         router.post('/admin/editProduct', controller.editProduct);
         router.get('/admin/getCategoriesIds', controller.getCategoriesIds);
         router.get('/admin/requestCatProducts/:id/:type', controller.returnCatProducts)
+        router.post('/admin/deleteCategory', controller.deleteCategory);
 
         /*^^^^ ADMINISTRATION CODE ^^^^*/
     }
