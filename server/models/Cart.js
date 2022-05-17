@@ -113,7 +113,7 @@ class Cart {
       const quantity = this.getQuantity(id);
       const title = product.title;
       const price = dollarUS.format(product.price);
-      totalCost += product.price;
+      totalCost += product.price * quantity;
       allProducts.push({ id, title, price, quantity });
     }
     totalCost = dollarUS.format(totalCost);
