@@ -2,6 +2,7 @@ window.onload = init();
 post = async function (url, data) {
     return await fetch(url, { method: "POST", headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
 }
+
 async function init() {
     await getStore(undefined, true);
 }
@@ -58,3 +59,47 @@ async function removeProductFromCart(attributes) {
     } else
         alert("An error occured, please try logging out and back in.");
 }
+var buttons;
+var hasRendered = false;
+PaypalButton = () => paypal.Buttons({
+    fundingSource: paypal.FUNDING.PAYPAL,
+    // Sets up the transaction when a payment button is clicked
+    createOrder: function (data, actions) {
+        return fetch("/api/orders", {
+            method: "post",
+            // use the "body" param to optionally pass additional order information
+            // like product ids or amount
+        })
+            .then((response) => response.json())
+            .then((order) => order.id);
+    },
+    // Finalize the transaction after payer approval
+    onApprove: function (data, actions) {
+        return fetch(`/api/orders/${data.orderID}/capture`, {
+            method: "post",
+        })
+            .then((response) => response.json())
+            .then((orderData) => {
+                // Successful capture! For dev/demo purposes:
+                console.log(
+                    "Capture result",
+                    orderData,
+                    JSON.stringify(orderData, null, 2)
+                );
+                var transaction =
+                    orderData.purchase_units[0].payments.captures[0];
+                alert(
+                    "Transaction " +
+                    transaction.status +
+                    ": " +
+                    transaction.id +
+                    "\n\nSee console for all available details"
+                );
+                paypalToggle = false;
+                // When ready to go live, remove the alert and show a success message within this page. For example:
+                // var element = document.getElementById('paypal-button-container');
+                // element.innerHTML = '<h3>Thank you for your payment!</h3>';
+                // Or go to another URL:  actions.redirect('thank_you.html');
+            })
+    }
+});
