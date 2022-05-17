@@ -4,7 +4,7 @@ import Category from "../models/Category.js";
 import Customer from "../models/Customer.js";
 import passport from "./passport.js";
 import path from 'path';
-
+import * as paypal from "./paypal-api.js";
 const __dirname = path.resolve('client/');
 
 export default class Controller {
@@ -12,7 +12,16 @@ export default class Controller {
         console.log(__dirname);
         response.sendFile('index.html', { root: __dirname });
     }
-
+    async getOrders(request, response) {
+        const order = await paypal.createOrder(request);
+        response.json(order);
+    }
+    async capturePayment(request, response) {
+        const { orderID } = request.params;
+        const captureData = await paypal.capturePayment(orderID);
+        // TODO: store payment information such as the transaction ID
+        response.json(captureData);
+    }
     async getCategory(request, response) {
         const category_id = request.body.id;
         return response.json(await Category.findOne({ _id: category_id }, { _id: 1, type: 1, products: 1 }));
