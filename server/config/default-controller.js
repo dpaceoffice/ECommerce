@@ -30,29 +30,35 @@ export default class Controller {
         let user = undefined;
         if (auth_user != undefined) {
             user = auth_user.email;
+            const active = await auth_user.getActiveCart();
+            var count = active.getCount();
+            var details = await active.getBreakdown();
         }
-        response.json({ cstate, pstate, user });
+        response.json({ cstate, pstate, user, count, details });
     }
-
-    getCheckout(request, response) {
-        let [body, total] = this.getStore().getCustomer().getActiveCart().getHtmlElement();
-        const cart = this.getStore().getCustomer().getActiveCart().getCheckoutHtml();
-        const data = { body, total, cart }
-        response.json(data)
+    async addToCart(request, response) {
+        const id = request.body.id;
+        const auth_user = request.user;
+        if (auth_user != undefined) {
+            const active = await auth_user.getActiveCart();
+            await active.addProduct(id, 1);
+            const count = active.getCount();
+            const details = await active.getBreakdown();
+            response.json({ count, details });
+        } else
+            response.json({ success: false });
     }
-    addToCart(request, response) {
-        const id = parseInt(request.body.id);
-        this.getStore().getCustomer()
-            .getActiveCart()
-            .addProduct(this.getStore().getProduct(id), 1);
-        response.json({ success: true });
-    }
-    removeFromCart(request, response) {
-        const id = parseInt(request.body.id);
-        this.getStore().getCustomer()
-            .getActiveCart()
-            .removeProduct(this.getStore().getProduct(id), 1);
-        response.json({ success: true });
+    async removeFromCart(request, response) {
+        const id = request.body.id;
+        const auth_user = request.user;
+        if (auth_user != undefined) {
+            const active = await auth_user.getActiveCart();
+            await active.removeProduct(id, 1);
+            const count = active.getCount();
+            const details = await active.getBreakdown();
+            response.json({ count, details });
+        } else
+            response.json({ success: false });
     }
     login(request, response, next) {
         const { email, password } = request.body;
