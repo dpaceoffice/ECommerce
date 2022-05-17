@@ -162,8 +162,7 @@ export default class Controller {
         var products = new Array();
         // if creating a new category
         if (id == "-1") {
-            var store = await this.getStore();
-            const newCategory = await store.createCategory(type, []);
+            const newCategory = await Store.createCategory(type, []);
             console.log(newCategory);
             response.send(JSON.stringify({ "id": newCategory }, { "products": [] }));
         } else {
@@ -240,9 +239,7 @@ export default class Controller {
         console.log("PRODUCT: -----------------");
         console.log(request.body[0]);
 
-        var store = await this.getStore();
-
-        var product = await store.createProduct(
+        var product = await Store.createProduct(
             request.body[0].title,
             request.body[0].description,
             request.body[0].price,
