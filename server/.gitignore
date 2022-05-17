@@ -3,3 +3,4 @@ node_modules
 data/*
 data/journal
 data/diagnostic.data
+paypalcreds
