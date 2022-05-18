@@ -17,11 +17,10 @@ const displayStore = (categories, products, cat) => {
     }
     addController('cat_id');
 
-    for (const product in products) {
+    for (const index in active) {
+        let product = active[index];
         let data = products[product];
         var id = data['_id'];
-        if (!active.includes(id))
-            continue;
         var title = data['title'];
         var desc = data['des'];
         var price = Intl.NumberFormat("en-US", {
@@ -51,8 +50,19 @@ const displayStore = (categories, products, cat) => {
     </div></div>`;
     }
     addController('addtocart');
+    addController('user-profile-button');
+    addController('home');
 }
-
+const displayAdmin = (attributes) => {
+    document.getElementById("categories-container").innerHTML = "";
+    document.getElementById("products-container").innerHTML = "";
+    loadAdminPage();
+}
+const homeButton = (attributes) => {
+    document.getElementById("categoryPage").innerHTML = "";
+    document.getElementById("view").innerHTML = "";
+    getStore();
+}
 const displayOptions = () => {
     const widget = document.getElementById('auth-status-button');
     widget.innerHTML = `<button type="button" class="btn" style="color: white;" id="login-show" data-bs-toggle="modal"
@@ -60,7 +70,6 @@ const displayOptions = () => {
     <i id='login-modal' class="bi bi-cart"> </i>Login
     </button>`;
     showLogin();
-    addController("login-button");
 }
 
 const displayLoginAttempt = (message) => {
@@ -72,11 +81,14 @@ const displayLoginAttempt = (message) => {
     password_field.value = ``;
     email_err.innerHTML = ``;
     email_field.value = ``;
-    if (message.includes('email')) {
+    if (message.includes('email'))
         email_err.innerHTML = `That account doesn't exist!`;
-    } else if (message.includes('password')) {
+    else if (message.includes('password'))
         password_err.innerHTML = `The password entered is incorrect!`;
-    } else {
+    else if (message.includes('Missing')) {
+        email_err.innerHTML = `That account doesn't exist!`;
+        password_err.innerHTML = `The password entered is incorrect!`;
+    } else if (message.includes('authenticated')) {
         document.getElementById('login-modal-close').click();
         renderCart();
     }
@@ -110,18 +122,20 @@ function showLogin() {
     const content = document.getElementById('modal-content');
     content.innerHTML = `<div class="modal-header" style="background-color: #d2e2d8;">
         <h5 class="modal-title" id="staticBackdropLabel">Login</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button type="button" id="login-modal-close" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body flex">
-            <div>
-                <label for='email'>Email:</label>
-                <input type='email' id='email' name='email' required>
-            </div>
-            <br>
-            <div>
-                <label for='password'>Password:</label>
-                <input type='password' id='password' name='password' required>
-            </div>
+        <p id="email-error" class="text-danger"></p>    
+        <div>
+            <label for='email'>Email:</label>
+            <input type='email' id='email' name='email' required>
+        </div>
+        <br>
+        <p id="password-error" class="text-danger"></p>
+        <div>
+            <label for='password'>Password:</label>
+            <input type='password' id='password' name='password' required>
+        </div>
         </div>
         <div class="modal-footer">
             <p class="bi-text-left me-5">Don't have an account? <a id="show-register" href="#">Register here.</a></p>
@@ -185,7 +199,7 @@ const setCartDisplay = (products, totalCost) => {
     document.getElementById("cost-label").innerHTML = total;
     addController('rmfromcart');
 }
-async function createPaypalButton() {
+async function createPaypalButton(attributes) {
     //document.getElementById('paypal-button-container').innerHTML = ``;
     if (buttons && buttons.close && hasRendered) {
         buttons.close();

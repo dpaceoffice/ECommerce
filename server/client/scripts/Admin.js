@@ -1,7 +1,3 @@
-window.onload = (event) => {
-    loadAdminPage();
-    console.log("LOAD PAGE!");
-}
 
 /* Sends the new order of the products based on the products' ids by posting*/
 async function postLayout(order, curCat) {
@@ -38,7 +34,7 @@ async function postLayout(order, curCat) {
                 requestedCategory.id = element.getAttribute('cat');
                 requestedCategory.type = element.getAttribute('type')
                 var result = await (postCategoryProducts(requestedCategory)).cancel;
-                
+
             })
     }
 }
@@ -76,7 +72,7 @@ async function postRemove(attributes) {
             let element = document.getElementById("view");
             requestedCategory.id = element.getAttribute('cat');
             requestedCategory.type = element.getAttribute('type')
- 
+
             var result = await (postCategoryProducts(requestedCategory)).cancel;
             //console.log(result);
         })
@@ -112,7 +108,7 @@ async function postNewProduct(postData, curCat) {
             let element = document.getElementById("view");
             requestedCategory.id = element.getAttribute('cat');
             requestedCategory.type = element.getAttribute('type')
- 
+
             var result = await (postCategoryProducts(requestedCategory)).cancel;
             //console.log(result);
         })
@@ -144,7 +140,7 @@ async function postEditProduct(postData) {
             let element = document.getElementById("view");
             requestedCategory.id = element.getAttribute('cat');
             requestedCategory.type = element.getAttribute('type')
- 
+
             var result = await (postCategoryProducts(requestedCategory)).cancel;
             //console.log(result);
         })
@@ -260,7 +256,7 @@ async function postCategoryProducts(category) {
         await loadAdminPage().then(() => { console.log("Add reload") })
         await clearGrid();
         await reloadAdminPage();
-        
+
         viewAdminPage([], data.id._id, data.id.type);
 
     }

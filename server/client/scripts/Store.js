@@ -32,7 +32,6 @@ async function handleLogin() {
     const response = await post(`http://localhost:3000/login/`, info);
     const data = await response.json();
     displayLoginAttempt(data.message);
-    getStore();
 }
 
 async function sendActiveCat(attributes) {

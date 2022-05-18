@@ -9,7 +9,7 @@ async function authenticateUser(email, password, done) {
     return done(null, false, { message: "no user with that email" });
   }
   if (await bcrypt.compare(password, user.password)) {
-    return done(null, user, { message: "User Authenticated" });
+    return done(null, user, { message: "user authenticated" });
   } else {
     return done(null, false, { message: "password incorrect" });
   }

@@ -47,6 +47,12 @@ export default class Controller {
         )
         var cstate = await Category.find({}, { _id: 1, type: 1, products: 1 });
         var pstate = await Product.find({}, { _id: 1, title: 1, price: 1, des: 1, image: 1 });
+        let org_products = {};
+        for (let index in pstate) {
+            let data = pstate[index];
+            org_products[data['_id']] = data;
+        }
+        pstate = org_products;
         const auth_user = request.user;
         let user = undefined;
         if (auth_user != undefined) {

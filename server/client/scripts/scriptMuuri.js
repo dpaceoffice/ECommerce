@@ -34,8 +34,8 @@ function addNewProduct(data) {
     updateIndices();
     // Sort the items only if the drag sorting is not active.
     if (sortFieldValue !== 'order') {
-    grid.sort(sortFieldValue === 'title' ? compareItemTitle : compareItemColor);
-    dragOrder = dragOrder.concat(newItems);
+        grid.sort(sortFieldValue === 'title' ? compareItemTitle : compareItemColor);
+        dragOrder = dragOrder.concat(newItems);
     }
 
     // Finally filter the items.
@@ -46,7 +46,7 @@ function addNewProduct(data) {
 }
 
 function removeOldProduct(e) {
-    
+
     var elem = elementClosest(e.target, '.item');
     //sortFieldValue = 'drag';
     console.log("PRODUCT ID TO REMOVE : " + elem.getAttribute('data-prodid'));
@@ -107,15 +107,15 @@ function generateElements(data, amount) {
 
             '<div class="card-id">' + id + '</div>' +
             '<a class="item-pic" target="_blank"><img class="card-img-top" id= "productImg" style="width: 17rem; height: 12rem; justify-content: center;" src="' + image + '" alt="' + image + '"></a>' +
-            
-            '<div class = "card-body"'+
+
+            '<div class = "card-body"' +
             '<div class="card-title"> <p class = "titleStyle">' + title + '</p></div>' +
             '<div class="desRule"> <p class="card-des">' + description + '</p> </div>' +
             '<p class="card-price"> $' + price + '</p>' +
             '</div>' +
 
-            '<button class="btn card-edit editProduct" id= "wantToEditBut" style="background-color:#709a71;" data-bs-toggle="modal" data-bs-target="#editProductModal" data-bs-whatever="@getbootstrap" product_number= "' + prodID+ '"> Edit </button>' +
-            '<div class="card-remove" > <button id = "removeProdBut" class="btn" product_number ="'+ prodID +'"> <i class="material-icons">&#xE5CD;</i> </div> </button>' +
+            '<button class="btn card-edit editProduct" id= "wantToEditBut" style="background-color:#709a71;" data-bs-toggle="modal" data-bs-target="#editProductModal" data-bs-whatever="@getbootstrap" product_number= "' + prodID + '"> Edit </button>' +
+            '<div class="card-remove" > <button id = "removeProdBut" class="btn" product_number ="' + prodID + '"> <i class="material-icons">&#xE5CD;</i> </div> </button>' +
 
 
             '</div>' +
@@ -139,7 +139,7 @@ function destroyGrid() {
 function initGrid(data) {
     var dragCounter = 0;
     const elemNum = Object.keys(data).length;
-    console.log("ELEM_NUM: "+elemNum);
+    console.log("ELEM_NUM: " + elemNum);
     gridElement = document.querySelector('.grid');
     grid = new Muuri(gridElement, {
         items: generateElements(data, elemNum),
@@ -161,19 +161,19 @@ function initGrid(data) {
 
         layoutOnInit: false
     })
-    .on('move', function () {
-        saveLayout(grid);
-    })
+        .on('move', function () {
+            saveLayout(grid);
+        })
 
-    .on('dragStart', function () {
-        ++dragCounter;
-        docElem.classList.add('dragging');
-    })
-    .on('dragEnd', function () {
-        if (--dragCounter < 1) {
-            docElem.classList.remove('dragging');
-        }
-    })
+        .on('dragStart', function () {
+            ++dragCounter;
+            docElem.classList.add('dragging');
+        })
+        .on('dragEnd', function () {
+            if (--dragCounter < 1) {
+                docElem.classList.remove('dragging');
+            }
+        })
 
     sortFieldValue = 'order';
 

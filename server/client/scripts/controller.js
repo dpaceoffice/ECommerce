@@ -6,7 +6,9 @@ const getCallbacks = () => ({
     'checkout': createPaypalButton,
     'register-button': handleRegister,
     'show-login': showLogin,
-    'show-register': showRegister
+    'show-register': showRegister,
+    'user-profile-button': displayAdmin,
+    'home': homeButton
 });
 const addController = function (...buttonIDs) {
     const callbacks = getCallbacks();
