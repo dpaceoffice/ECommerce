@@ -67,6 +67,8 @@ async function handleRegister() {
 
         if (data.error) {
             displayRegisterAttempt(data.errorMsg);
+        }else{
+            showLogin();
         }
     } catch (error) {
         console.log(error);
