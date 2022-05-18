@@ -3,7 +3,9 @@ const getCallbacks = () => ({
     'addtocart': addProductToCart,
     'rmfromcart': removeProductFromCart,
     'login-button': handleLogin,
-    'register-button': handleRegister
+    'register-button': handleRegister,
+    'show-login': showLogin,
+    'show-register': showRegister
 });
 const addController = function (...buttonIDs) {
     const callbacks = getCallbacks();
