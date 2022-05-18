@@ -5,7 +5,10 @@ import Customer from "../models/Customer.js";
 import passport from "./passport.js";
 import path from 'path';
 import * as paypal from "./paypal-api.js";
+import bcrypt from "bcrypt";
+
 const __dirname = path.resolve('client/');
+
 
 export default class Controller {
     getIndex(request, response) {
@@ -97,6 +100,41 @@ export default class Controller {
             }
         })(request, response, next);
     }
+
+    async register(request, response) {
+        const { name, email, password } = request.body;
+
+        if (!name && !email && !password) {
+            response.json({ error: true, errorMsg: "Fill in all of the fields." });
+        } else if (!name) {
+            response.json({ error: true, errorMsg: "Fill in the username field." });
+        } else if (!email) {
+            response.json({ error: true, errorMsg: "Fill in the email field." });
+        } else if (!password) {
+            response.json({ error: true, errorMsg: "Fill in the password field." });
+        }
+        else {
+            await Customer.findOne({ email: email }).then(user => {
+                if (user) {
+                    response.json({ error: true, errorMsg: "Email already exists. Use another one." });
+                } else {
+                    bcrypt.hash(password, 10, async (err, hash) => {
+                        if (err) throw err;
+                        const document = await Store.createCustomer(name, email, hash);
+                        const data = { document: document }
+                        response.status(200).json(data);
+                    });
+                }
+            })
+        }
+
+    }
+
+    async getCustomerData(request, response) {
+        var customer = await Customer.find({});
+        response.json({ customer });
+    }
+
     async test(request, response) {
         const authenticated_user = request.user;
         if (authenticated_user == undefined || authenticated_user.rights < 2) {

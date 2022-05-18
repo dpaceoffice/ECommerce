@@ -1,26 +1,26 @@
 {
-    "name": "vibingspree",
-    "version": "1.0.0",
-    "description": "Backend API for storefront",
-    "author": "David, Andy, Lisa",
-    "main": "app.js",
-    "type": "module",
-    "scripts": {
-        "start": "npm install && node app",
-        "live": "nodemon server.js"
-    },
-    "dependencies": {
-        "auto-bind": "^5.0.1",
-        "cors": "*",
-        "dotenv": "*",
-        "express": "*",
-        "mongoose": "^6.3.2",
-        "shortid": "*",
-        "express-session": "*",
-        "passport": "*",
-        "passport-local": "*",
-        "node-fetch": "^3.2.1",
-        "muuri": "^0.9.5",
-        "web-animations-js": "^2.3.2"
-    }
+        "name": "vibingspree",
+        "version": "1.0.0",
+        "description": "Backend API for storefront",
+        "author": "David, Andy, Lisa",
+        "main": "app.js",
+        "type": "module",
+        "scripts": {
+                "start": "npm install && node app",
+                "live": "nodemon server.js"
+        },
+        "dependencies": {
+                "auto-bind": "^5.0.1",
+                "bcrypt": "^5.0.1",
+                "cors": "*",
+                "dotenv": "*",
+                "express": "*",
+                "express-session": "*",
+                "mongoose": "^6.3.2",
+                "passport": "*",
+                "passport-local": "*",
+                "node-fetch": "^3.2.1",
+                "muuri": "^0.9.5",
+                "web-animations-js": "^2.3.2"
+        }
 }

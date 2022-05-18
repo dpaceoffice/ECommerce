@@ -103,3 +103,23 @@ PaypalButton = () => paypal.Buttons({
             })
     }
 });
+
+async function handleRegister() {
+    try {
+        const config = new Object();
+        config.method = "POST";
+        config.headers = { 'Content-Type': 'application/json' };
+        config.body = JSON.stringify({ 'name': registerName.value, 'email': registerEmail.value, 'password': registerPassword.value });
+        const response = await fetch("http://localhost:3000/register", config);
+        const data = await response.json();
+
+        if (data.error) {
+            displayRegisterAttempt(data.errorMsg);
+        } else {
+            showLogin();
+        }
+    } catch (error) {
+        console.log(error);
+    }
+
+}

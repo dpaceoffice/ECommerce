@@ -3,7 +3,10 @@ const getCallbacks = () => ({
     'addtocart': addProductToCart,
     'rmfromcart': removeProductFromCart,
     'login-button': handleLogin,
-    'checkout': createPaypalButton
+    'checkout': createPaypalButton,
+    'register-button': handleRegister,
+    'show-login': showLogin,
+    'show-register': showRegister
 });
 const addController = function (...buttonIDs) {
     const callbacks = getCallbacks();
@@ -34,7 +37,7 @@ const adminAddController = async function (...adminButtonIDs) {
         for (let element of document.querySelectorAll('[id=' + id + ']')) {
             //console.log("ID: " + id);
             element.addEventListener("click", async () => {
-                console.log("CLICKED! "+ id);
+                console.log("CLICKED! " + id);
                 if (id == "saveOrder") {
                     //console.log("LAYOUT___:" + window.localStorage.getItem('prodIdlayout'))
                     let curCat = await document.getElementById("view").getAttribute("cat");

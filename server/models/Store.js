@@ -45,7 +45,7 @@ export default class Store {
       carts: carts,
       curCart: curCart,
       curCtg: curCtg,
-      htmlElement: htmlElement//`<i class="bi bi-house"></i> Greetings ${this.getName()}!`
+      htmlElement: htmlElement//<i class="bi bi-house"></i> Greetings ${this.getName()}!
     });
     return await newCustomer.save();
   }
