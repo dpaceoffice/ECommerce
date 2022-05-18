@@ -1,9 +1,11 @@
 import mongoose from "mongoose";
-
+import Cart from "./Cart.js";
 const Schema = mongoose.Schema;
 const userSchema = new Schema({
   name: String,
   email: String,
+  password: String,
+  rights: Number,
   carts: [{ type: Schema.ObjectId, ref: 'Cart' }],
   curCart: Number,
   curCtg: Number,
@@ -21,8 +23,9 @@ class Customer {
    * Gets the cart's id
    * @returns Active cart id
    */
-  getActiveCart() {
-    return this.carts[this.curCart];
+  async getActiveCart() {
+    let id = this.carts[this.curCart];
+    return await Cart.findOne({ _id: id });
   }
   /**
    * Get the private string name
@@ -45,6 +48,13 @@ class Customer {
    */
   setCurrentCategory(id) {
     this.curCtg = id;
+  }
+  /**
+   * Temporary
+   * @returns password
+   */
+  getPassword() {
+    return this.password;
   }
 }
 

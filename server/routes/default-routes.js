@@ -1,4 +1,4 @@
-import Controller from "../controllers/default-controller.js";
+import Controller from "../config/default-controller.js";
 import express from 'express';
 
 export default class Router {
@@ -9,11 +9,13 @@ export default class Router {
         const controller = new Controller();
         router.get('/', controller.getIndex);
         router.get('/store-data', controller.getStoreData);
-        router.get('/checkout-data', controller.getCheckout);
-        router.post('/setCategory', controller.setCategory);
-        router.get('/carts', controller.getCarts)
+
+        /**Shopping Cart */
         router.post('/add-product', controller.addToCart);
         router.post('/remove-product', controller.removeFromCart);
+
+        /**Login */
+        router.post('/login', controller.login);
 
         /**Expects category id in post body*/
         router.post('/category', controller.getCategory);

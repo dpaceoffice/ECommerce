@@ -9,7 +9,7 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="styles/bootstrap.min.css">
     <link rel="stylesheet" href="styles/bootstrap-icons.css">
-    <title>Shopping Cart</title>
+    <title>Vibing Spree</title>
 </head>
 
 <body class="container-fluid">
@@ -17,7 +17,8 @@
         <a class="navbar-brand" style="color: white;" id="home" href="#">
             <i class="bi bi-house"></i>
         </a>
-        <button class="navbar-toggler" style="background-color: #d2e2d8;" data-bs-toggle="collapse" data-bs-target="#navbar-options">
+        <button class="navbar-toggler" style="background-color: #d2e2d8;" data-bs-toggle="collapse"
+            data-bs-target="#navbar-options">
             <i class="navbar-toggler-icon"></i>
         </button>
         <div class="collapse navbar-collapse" id="navbar-options">
@@ -33,10 +34,9 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <button type="button" class="btn" style="color: white;" id="checkout" data-bs-toggle="modal"
-                        data-bs-target="#staticBackdrop">
-                        <i id='checkout-button' class="bi bi-cart"> </i>Checkout
-                    </button>
+                    <div id="auth-status-button">
+
+                    </div>
                 </li>
             </ul>
         </div>
@@ -46,8 +46,8 @@
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header" style = "background-color: #d2e2d8;">
+            <div class="modal-content" id="modal-content">
+                <div class="modal-header" style="background-color: #d2e2d8;">
                     <h5 class="modal-title" id="staticBackdropLabel">Shopping Cart</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -58,7 +58,8 @@
                     <p id="cost-label" class="bi-text-left me-5">Total Cost: $0.00
                     <p>
                         <!--<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>-->
-                        <button type="button" class="btn" style="background-color: #709a71;">Continue to checkout</button>
+                        <button type="button" class="btn" style="background-color: #709a71;">Continue to
+                            checkout</button>
                 </div>
             </div>
         </div>
@@ -87,7 +88,8 @@
     <script src='scripts/view.js'></script>
     <script src='scripts/Store.js'></script>
     <!-- Bootstrap Bundle with Popper -->
-    <script src="scripts/bootstrap.bundle.min.js"></script>
+
+    <script src="./scripts/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

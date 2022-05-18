@@ -13,6 +13,9 @@
         "dotenv": "*",
         "express": "*",
         "mongoose": "^6.3.2",
-        "shortid": "*"
+        "shortid": "*",
+        "express-session": "*",
+        "passport": "*",
+        "passport-local": "*"
     }
 }

@@ -37,6 +37,7 @@ class Category {
   getID() {
     return this._id;
   }
+
 }
 categorySchema.loadClass(Category);
 export default mongoose.model('Category', categorySchema);
