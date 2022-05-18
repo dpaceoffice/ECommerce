@@ -24,6 +24,12 @@ export default class Store {
     if (exists.length > 0) {
       return exists[0];
     }
+    const cart = await new Cart({
+      products: [],
+      quantities: {}
+    }).save();
+    if (carts == undefined)
+      carts = [cart];
     let newCustomer = new Customer({
       name: name,
       email: email,
@@ -32,7 +38,7 @@ export default class Store {
       carts: carts,
       curCart: curCart,
       curCtg: curCtg,
-      htmlElement: htmlElement//`<i class="bi bi-house"></i> Greetings ${this.getName()}!`
+      htmlElement: htmlElement//<i class="bi bi-house"></i> Greetings ${this.getName()}!
     });
     return await newCustomer.save();
   }
