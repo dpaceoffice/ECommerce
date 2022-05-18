@@ -1,6 +1,7 @@
 import { Strategy } from "passport-local";
 import passport from "passport";
 import Customer from "../models/Customer.js";
+import bcrypt from "bcrypt";
 
 async function authenticateUser(email, password, done) {
   const user = await Customer.findOne({ email: email });
@@ -8,7 +9,7 @@ async function authenticateUser(email, password, done) {
     console.log("No user with that email");
     return done(null, false);
   }
-  if (password == user.password) {
+  if (await bcrypt.compare(password, user.password)) {
     console.log("User Authenticated");
     return done(null, user);
   } else {
