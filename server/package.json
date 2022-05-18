@@ -9,13 +9,14 @@
         "start": "npm install && node app"
     },
     "dependencies": {
+        "bcrypt": "^5.0.1",
         "cors": "*",
         "dotenv": "*",
         "express": "*",
-        "mongoose": "^6.3.2",
-        "shortid": "*",
         "express-session": "*",
+        "mongoose": "^6.3.2",
         "passport": "*",
-        "passport-local": "*"
+        "passport-local": "*",
+        "shortid": "*"
     }
 }

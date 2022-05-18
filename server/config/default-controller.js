@@ -3,6 +3,8 @@ import Product from "../models/Product.js";
 import Category from "../models/Category.js";
 import Customer from "../models/Customer.js";
 import passport from "./passport.js";
+import { json } from "express";
+import bcrypt from "bcrypt";
 
 export default class Controller {
     constructor() {
@@ -90,29 +92,29 @@ export default class Controller {
         response.json(data)
     }
 
-    //Customer
     async register(request, response) {
         const { name, email, password } = request.body;
-        console.log(request.body)
 
-        let errors = [];
-
-        if (!name || !email || !password) {
-            errors.push({ msg: "Fill in the fields" });
+        if (!name && !email && !password) {
+            response.json({ error: true, errorMsg: "Fill in all of the fields." });
+        } else if (!name) {
+            response.json({ error: true, errorMsg: "Fill in the username field." });
+        } else if (!email) {
+            response.json({ error: true, errorMsg: "Fill in the email field." });
+        } else if (!password) {
+            response.json({ error: true, errorMsg: "Fill in the password field." });
         }
-
-        if (errors.length > 0) {
-            console.log(errors);
-        } else {
-            Customer.findOne({ email: email }).then(user => {
+        else {
+            await Customer.findOne({ email: email }).then(user => {
                 if (user) {
-                    errors.push({ msg: "Email already exists." });
-                    console.log(errors);
+                    response.json({ error: true, errorMsg: "Email already exists. Use another one." });
                 } else {
-                    const newCustomer = new Customer({ name: name, email: email, password: password });
-                    const document = newCustomer.save()
-                    const data = { document: document }
-                    response.json(data);
+                    bcrypt.hash(password, 10, async (err, hash) => {
+                        if (err) throw err;
+                        const document = await Store.createCustomer(name, email, hash);
+                        const data = { document: document }
+                        response.status(200).json(data);
+                    });
                 }
             })
         }
