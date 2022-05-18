@@ -105,7 +105,7 @@ function showLogin() {
             </div>
         </div>
         <div class="modal-footer">
-            <p class="bi-text-left me-5">Don't have an account? <a id="show-register">Register here.</a></p>
+            <p class="bi-text-left me-5">Don't have an account? <a id="show-register" href="#">Register here.</a></p>
             <!--<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>-->
             <button id="login-button" type="button" class="btn" style="background-color: #709a71;">Login</button>
         </div>`;
@@ -120,7 +120,7 @@ function showRegister() {
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>
     <div class="modal-body flex">
-        <small id="error-msg"></small>
+        <small id="error-msg" class="text-danger"></small>
         <div> 
             <label for='name'>Username: </label>
             <input type='text' id='registerName' placeholder='Username'>
@@ -137,7 +137,7 @@ function showRegister() {
         </div>
     </div>
     <div class="modal-footer">
-        <p class="bi-text-left me-5">Already have an account? <a id="show-login">Login here.</a></p>
+        <p class="bi-text-left me-5">Already have an account? <a id="show-login" href="#">Login here.</a></p>
         <!--<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>-->
         <button id="register-button" type="button" class="btn" style="background-color: #709a71;">Register</button>
     </div>`;
