@@ -1,5 +1,7 @@
 import Controller from "../config/default-controller.js";
+import { ensureAdmin, ensureAuth } from "../config/auth.js";
 import express from 'express';
+
 
 export default class Router {
     #router
@@ -11,8 +13,8 @@ export default class Router {
         router.get('/store-data', controller.getStoreData);
 
         /**Shopping Cart */
-        router.post('/add-product', controller.addToCart);
-        router.post('/remove-product', controller.removeFromCart);
+        router.post('/add-product', ensureAuth, controller.addToCart);
+        router.post('/remove-product', ensureAuth, controller.removeFromCart);
 
         /**Login */
         router.post('/login', controller.login);
@@ -26,23 +28,23 @@ export default class Router {
         router.post('/category/products', controller.getProducts);
 
         /**Paypal EndPoints */
-        router.post('/api/orders', controller.getOrders);
-        router.post('/api/orders/:orderID/capture', controller.capturePayment);
+        router.post('/api/orders', ensureAuth, controller.getOrders);
+        router.post('/api/orders/:orderID/capture', ensureAuth, controller.capturePayment);
 
-        router.get('/test-add', controller.test);
+        router.get('/test-add', ensureAdmin, controller.test);
 
 
         /* ADMINISTRATION CODE */
 
-        router.get('/admin', controller.loadAdmin);
-        router.post('/admin/addProduct', controller.addProduct);
-        router.post('/admin/rearrangeLayout', controller.rearrangeLayout);
-        router.post('/admin/removeProduct', controller.removeProduct);
-        router.get('/admin/productById/:id', controller.productById);
-        router.post('/admin/editProduct', controller.editProduct);
-        router.get('/admin/getCategoriesIds', controller.getCategoriesIds);
-        router.get('/admin/requestCatProducts/:id/:type', controller.returnCatProducts)
-        router.post('/admin/deleteCategory', controller.deleteCategory);
+        router.get('/admin', ensureAdmin, controller.loadAdmin);
+        router.post('/admin/addProduct', ensureAdmin, controller.addProduct);
+        router.post('/admin/rearrangeLayout', ensureAdmin, controller.rearrangeLayout);
+        router.post('/admin/removeProduct', ensureAdmin, controller.removeProduct);
+        router.get('/admin/productById/:id', ensureAdmin, controller.productById);
+        router.post('/admin/editProduct', ensureAdmin, controller.editProduct);
+        router.get('/admin/getCategoriesIds', ensureAdmin, controller.getCategoriesIds);
+        router.get('/admin/requestCatProducts/:id/:type', ensureAdmin, controller.returnCatProducts)
+        router.post('/admin/deleteCategory', ensureAdmin, controller.deleteCategory);
 
         /*^^^^ ADMINISTRATION CODE ^^^^*/
     }

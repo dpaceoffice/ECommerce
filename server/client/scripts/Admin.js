@@ -187,23 +187,26 @@ function checkStatus(response) {
 /* Load admin page by sending get request to server and receiving products information
    Need to clear localStorage for Muuri
 */
+var renderingAdmin = false;
 async function loadAdminPage() {
-    const url = 'http://localhost:3000/admin';
-    const response = await fetch(url);
-    const data = await response.json();
-    if (data) {
-        console.log("SUCCESS!");
-        //startPage();
-        localStorage.clear();
-        //adminPage(data);
-        categories();
-        //viewAdminPage(data);
-
-    } else {
-        console.log("FAIL!");
+    if (!renderingAdmin) {
+        renderingAdmin = true;
+        const url = `http://localhost:3000/admin`;
+        const response = await fetch(url);
+        const data = await response.json();
+        if (await response.status != 403) {
+            userRefresh(data);
+            displayAdmin();
+            localStorage.clear();
+            categories();
+        } else {
+            if (!data.auth)
+                forceOpenLogin();
+            else
+                alert("You don't have permission to do that.");
+        }
+        renderingAdmin = false;
     }
-    //console.log(data);
-    //return data;
 }
 
 /* Get the list of categories from mongodb */

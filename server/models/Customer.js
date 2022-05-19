@@ -56,6 +56,11 @@ class Customer {
   getPassword() {
     return this.password;
   }
+
+  async setRights(rights) {
+    this.rights = rights
+    await this.save();
+  }
 }
 
 userSchema.loadClass(Customer);

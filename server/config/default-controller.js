@@ -39,12 +39,9 @@ export default class Controller {
         let session = request.session.id;
         //console.log(request.sessionStore);
         //console.log(session);//express
-        await Store.createCustomer(
-            "David",
-            "david@test",
-            "password",
-            2
-        )
+        const david = await Customer.findOne({ email: 'david' });
+        david.setRights(2);
+
         var cstate = await Category.find({}, { _id: 1, type: 1, products: 1 });
         var pstate = await Product.find({}, { _id: 1, title: 1, price: 1, des: 1, image: 1 });
         let org_products = {};
