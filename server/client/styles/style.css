@@ -2,6 +2,7 @@
   position: relative;
 }*/
 
+
 .btn:focus,.btn:active {
   outline: none !important;
   box-shadow: none !important;
@@ -36,7 +37,7 @@
 }
 
 .card-id {
-  color:#f4501e;
+  color:#f4501e00;
 }
 
 /*  font-size: 3.0vw;*/

@@ -1,6 +1,6 @@
 const displayStore = (categories, products, cat) => {
     document.getElementById("store-front-meta").innerHTML = `<div class="row mt-5 text-center">
-    <div class="col">
+    <div class="col-4">
         <div class="card mb-2" style="max-width: 18rem; margin-left: 60px;">
             <ul class="list-group list-group-flush">
                 <div id="categories-container">
@@ -9,7 +9,7 @@ const displayStore = (categories, products, cat) => {
         </div>
     </div>
     <div class="col">
-        <div id="products-container" class="row ms-5">
+        <div id="products-container" class="row ms-5 ">
         </div>
     </div>
 </div>`;
@@ -41,14 +41,14 @@ const displayStore = (categories, products, cat) => {
         }).format(data['price']);
         var img = data['image'];
         document.getElementById("products-container").innerHTML +=
-            `<div class="col"><div class="card mb-3" style="filter: drop-shadow(7px 7px 0px #597658); width: 18rem; border-width: thick; border-style: solid; border-color: #709a71;">
+            `<div class="col"><div class="card mb-3" style=" filter: drop-shadow(7px 7px 0px #597658); width: 18rem; border-width: thick; border-style: solid; border-color: #709a71; background: #709a71; ">
         <img class="card-img-top" src="` +
             img +
             `" alt="` +
             title +
             `">
             <div class="card-body">
-                <h5 class="ms-0 card-title text-dark">` +
+                <h5 class="ms-0 card-title">` +
             title +
             `</h5>
                 <p class="card-text">` +
@@ -57,7 +57,7 @@ const displayStore = (categories, products, cat) => {
                 <p class="card-text">` +
             price +
             `</p>
-                <a class="btn" style="background-color:#709a71; color: white" id="addtocart" product_number=${id}>Add to Cart</a>
+                <a class="btn" style="background-color:#577a58; color: white" id="addtocart" product_number=${id}>Add to Cart</a>
             </div>
     </div></div>`;
     }

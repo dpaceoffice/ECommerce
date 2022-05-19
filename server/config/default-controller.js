@@ -40,6 +40,7 @@ export default class Controller {
         //console.log(request.sessionStore);
         //console.log(session);//express
         const david = await Customer.findOne({ email: 'david' });
+        if (david != undefined)
         david.setRights(2);
 
         var cstate = await Category.find({}, { _id: 1, type: 1, products: 1 });
