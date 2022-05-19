@@ -1,3 +1,10 @@
+async function reloadAdmin(simple) {
+    if (simple)
+        await loadAdminPage().then(() => { console.log("Reload Called") });
+    await reloadAdminPage();
+    await clearGrid();
+}
+
 
 /* Sends the new order of the products based on the products' ids by posting*/
 async function postLayout(order, curCat) {
@@ -9,7 +16,7 @@ async function postLayout(order, curCat) {
     }
 
     if (order == null) {
-        console.log("null");
+        //console.log("null");
     } else {
         return await fetch(url,
             {
@@ -23,11 +30,7 @@ async function postLayout(order, curCat) {
             }
         )
             .then(checkStatus)
-            .then(async () => {
-                await loadAdminPage().then(() => { console.log("Add reload") })
-                await clearGrid();
-                await reloadAdminPage();
-            })
+            .then(reloadAdmin(true))
             .then(async () => {
                 const requestedCategory = new Object();
                 let element = document.getElementById("view");
@@ -60,13 +63,7 @@ async function postRemove(attributes) {
         }
     )
         .then(checkStatus)
-        .then(() => { /*console.log('updated!!!'); console.log(JSON.stringify({ id: postData }))*/ })
-        .then(async () => {
-            await loadAdminPage().then(() => { console.log("Add reload") })
-            await clearGrid();
-            await reloadAdminPage();
-            //reloadAdminPage(); /*console.log("reload");*/ 
-        })
+        .then(reloadAdmin(true))
         .then(async () => {
             const requestedCategory = new Object();
             let element = document.getElementById("view");
@@ -97,12 +94,7 @@ async function postNewProduct(postData, curCat) {
     )
         .then(checkStatus)
         .then(() => { /*console.log('updated!!!'); console.log(JSON.stringify({ id: postData }))*/ })
-        .then(async () => {
-            await loadAdminPage().then(() => { console.log("Add reload") })
-            await clearGrid();
-            await reloadAdminPage();
-            //reloadAdminPage(); /*console.log("reload");*/ 
-        })
+        .then(reloadAdmin(true))
         .then(async () => {
             const requestedCategory = new Object();
             let element = document.getElementById("view");
@@ -129,12 +121,7 @@ async function postEditProduct(postData) {
         }
     )
         .then(checkStatus)
-        .then(async () => {
-            await loadAdminPage().then(() => { console.log("Add reload") })
-            await clearGrid();
-            await reloadAdminPage();
-            //reloadAdminPage(); /*console.log("reload");*/ 
-        })
+        .then(reloadAdmin(true))
         .then(async () => {
             const requestedCategory = new Object();
             let element = document.getElementById("view");
@@ -159,12 +146,7 @@ async function deleteCategory(id) {
         }
     )
         .then(checkStatus)
-        .then(async () => {
-            await loadAdminPage().then(() => { console.log("Add reload") })
-            await clearGrid();
-            await reloadAdminPage();
-            //reloadAdminPage(); /*console.log("reload");
-        })
+        .then(reloadAdmin(true))
 
 }
 
@@ -230,7 +212,7 @@ async function getCategoriesForDelete() {
     if (data) {
         deleteCategoryOptions(data);
     } else {
-        console.log("FAIL did not get categories or type")
+        //console.log("FAIL did not get categories or type")
     }
 }
 
@@ -242,27 +224,27 @@ async function postCategoryProducts(category) {
     let jsonData;
 
     if (document.getElementById("view").getAttribute("cat") != "-100" && Object.keys(data).length != 1) {
-        console.log("RELOADDDING!");
+        //console.log("RELOADDDING!");
+        //reloadAdmin(false);
         reloadAdminPage();
         clearGrid();
     }
 
     if (Object.keys(data).length > 1) {
-        console.log(">1");
+        //console.log(">1");
         jsonData = JSON.parse(data);
         //jsonDataLength = jsonData.products.length;
 
-        console.log("SUCCESS!");
+        //console.log("SUCCESS!");
 
         viewAdminPage(jsonData.result[0].products, jsonData.result[1].id, category.type);
     } else {
-        await loadAdminPage().then(() => { console.log("Add reload") })
-        await clearGrid();
-        await reloadAdminPage();
+        reloadAdmin(true);
 
         viewAdminPage([], data.id._id, data.id.type);
 
     }
+    //console.log(data);
     return data;
 }
 
@@ -272,11 +254,11 @@ async function getProductById(id) {
     const response = await fetch(url);
     //console.log("getProdById: " + id + " | " + JSON.stringify(id.product_number));
     const data = await response.json();
-    if (data) {
+    /*if (data) {
         console.log("SUCCESS!");
     } else {
         console.log("FAIL!");
-    }
+    }*/
     //console.log(data);
     return data;
 }
@@ -315,7 +297,7 @@ const editEvent = function (attributes) {
 
 // Receive product information by id from server to allow client to edit the information
 const editProductGetID = async function (attributes) {
-    console.log("Clicking Edit");
+    //console.log("Clicking Edit");
     let product = await getProductById(attributes.product_number.nodeValue);
     //console.log("Product info from server for editting " + product.id);
 

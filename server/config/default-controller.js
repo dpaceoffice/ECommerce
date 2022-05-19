@@ -12,7 +12,7 @@ const __dirname = path.resolve('client/');
 
 export default class Controller {
     getIndex(request, response) {
-        console.log(__dirname);
+        //console.log(__dirname);
         response.sendFile('index.html', { root: __dirname });
     }
     async getOrders(request, response) {
@@ -55,8 +55,8 @@ export default class Controller {
         if (auth_user != undefined) {
             user = auth_user.email;
             const active = await auth_user.getActiveCart();
+            var details = await active.getBreakdown();//this updates the value total quantity value
             var count = active.getCount();
-            var details = await active.getBreakdown();
         }
         response.json({ cstate, pstate, user, count, details });
     }
@@ -87,7 +87,7 @@ export default class Controller {
     login(request, response, next) {
         const { email, password } = request.body;
         let session = request.session.id;
-        console.log(session);//express
+        //console.log(session);//express
 
         passport.authenticate('local', (err, user, info) => {
             if (err) { return next(err); } //error exception
@@ -188,7 +188,7 @@ export default class Controller {
             const categories = await Category.find({}, { type: 1 });
             //console.log(categories);
             response.json(categories);
-            console.log("GET SUCCESS! GET categories and types from mongodb");
+            //console.log("GET SUCCESS! GET categories and types from mongodb");
         };
         productsMongo();
     }
@@ -196,15 +196,15 @@ export default class Controller {
 
     // Receives category id and returns products in that category
     async returnCatProducts(request, response) {
-        console.log(request.params);
-        console.log("ID: " + request.params.id + " | Type: " + request.params.type);
+        //console.log(request.params);
+        //console.log("ID: " + request.params.id + " | Type: " + request.params.type);
         const id = request.params.id;
         const type = request.params.type;
         var products = new Array();
         // if creating a new category
         if (id == "-1") {
             const newCategory = await Store.createCategory(type, []);
-            console.log(newCategory);
+            //console.log(newCategory);
             response.send(JSON.stringify({ "id": newCategory }, { "products": [] }));
         } else {
             let productsNum;
@@ -212,8 +212,8 @@ export default class Controller {
             let array = new Array();
             const categories = await Category.find({ _id: id }, { products: 1 });
             productsNum = await categories[0].products.length;
-            console.log("Product Numbers: ");
-            console.log(productsNum);
+            //console.log("Product Numbers: ");
+            //console.log(productsNum);
 
             // if category exists but is empty
             if (productsNum == 0) {
@@ -224,13 +224,13 @@ export default class Controller {
                     return Category.find({ _id: id }, { products: 1 })
                 }
                 let mongoCatProd2 = mongoCatProd();
-                console.log(mongoCatProd);
+                //console.log(mongoCatProd);
 
                 mongoCatProd2.then(function (result) {
                     //console.log("what?????");
-                    console.log(result[0].products);
+                    //console.log(result[0].products);
                     productsNum = result[0].products.length;
-                    console.log(catProdIds(result[0].products));
+                    catProdIds(result[0].products);
                 })
                 const catProdIds = async (array2) => {
                     for (let element of array2) {
@@ -239,14 +239,14 @@ export default class Controller {
                         //console.log(typeof prodID + ": " + prodID);
                         let addProd = function () { return Product.find({ _id: prodID }) };
                         let addProd2 = addProd();
-                        console.log(addProd);
+                        //console.log(addProd);
                         addProd2.then(function (result) {
                             products.push(result[0]);
                             i++;
                             if (i == productsNum) {
-                                console.log("Getting Category Products: " + id);
-                                console.log("Products are ");
-                                console.log(products);
+                                //console.log("Getting Category Products: " + id);
+                                //console.log("Products are ");
+                                //console.log(products);
                                 response.json(JSON.stringify({ "result": [{ "products": products }, { "id": id }] }))
                             }
                             //console.log("OUTSIDE-"+ products);
@@ -254,32 +254,28 @@ export default class Controller {
                     }
                 }
             }
-
-
-
-
         }
     }
 
     /* Load admin page by getting collection of products from mongodb and sending it to client to load page */
-    loadAdmin(request, response) {
-        let result;
-        const productsMongo = async () => {
-            result = await Product.find();
-            response.json(result);
-        };
-        productsMongo();
-
+    async loadAdmin(request, response) {
+        if (!request.isAuthenticated())
+            throw ('Forbidden Function');
+        const active = await request.user.getActiveCart();
+        var details = await active.getBreakdown();//this updates the value total quantity value
+        var count = active.getCount();
+        response.status(200).json({ details, count });
     }
 
     /* Add new product object to mongodb by receiving the new product as JSON */
     async addProduct(request, response) {
         response.send(request.body);
+        /*
         console.log("POST SUCCESS! Added product! Can update mongo!");
         console.log("Category: " + request.body[1])
         console.log("PRODUCT: -----------------");
         console.log(request.body[0]);
-
+        */
         var product = await Store.createProduct(
             request.body[0].title,
             request.body[0].description,
@@ -287,7 +283,7 @@ export default class Controller {
             request.body[0].image
         )
 
-        console.log("Product : -----" + product);
+        //console.log("Product : -----" + product);
         await Category.updateOne(
             { _id: request.body[1] },
             { $push: { products: product } }
@@ -299,7 +295,8 @@ export default class Controller {
     /* Can rearrange layout/order of products by sending an array that contains the order based on the products' id */
     async rearrangeLayout(request, response) {
         response.send(request.body);
-        console.log("POST SUCCESS! Rearrange Layout! Can update mongo!");
+        //console.log("POST SUCCESS! Rearrange Layout! Can update mongo!");
+        /*
         console.log(request.body);
         console.log(typeof request.body.order)
         console.log(request.body.order);
@@ -308,7 +305,7 @@ export default class Controller {
         console.log("inside array");
         console.log(request.body.order[0]);
         console.log(request.body.order[1]);
-
+*/
         let layout = await Category.updateOne(
             { _id: request.body.curCat },
             {
@@ -322,9 +319,11 @@ export default class Controller {
     /* Remove product by receiving the product id from the client and removing it in mongodb */
     async removeProduct(request, response) {
         response.send(request.body);
+        /*
         console.log("POST SUCCESS! Removed Product's ID: " + JSON.stringify(request.body));
         console.log(request.body.id);
         console.log(request.body.cat);
+        */
         let prodID = request.body.id;
         await Category.updateMany(
             {},
@@ -338,9 +337,9 @@ export default class Controller {
     /* Get product information by client sending requested product id to server. Server can then access mongodb and get product */
     async productById(request, response) {
         const id = request.params.id;
-        console.log("ID: " + request.params.id);
+        //console.log("ID: " + request.params.id);
         const product = await Product.find({ _id: id })
-        console.log(product[0])
+        //console.log(product[0])
         response.json({
             id: product[0]._id,
             title: product[0].title,
@@ -354,6 +353,7 @@ export default class Controller {
     /* Edit product information by client sending new changes as a product object to update product in mongodb */
     async editProduct(request, response) {
         response.send(request.body);
+        /*
         console.log("POST SUCCESS! Edit Product! Can update mongo!");
         console.log(request.body);
         console.log(request.body.id);
@@ -361,6 +361,7 @@ export default class Controller {
         console.log(request.body.description);
         console.log(request.body.price);
         console.log(request.body.image);
+        */
         // _id, title, des, price, image
         let edit = await Product.updateMany(
             { _id: request.body.id },
@@ -373,13 +374,13 @@ export default class Controller {
                 }
             }
         )
-        console.log(edit);
+        //console.log(edit);
     }
 
     /* Delete categpry */
     async deleteCategory(request, response) {
         response.send(request.body);
-        console.log("POST SUCCESS! Delete Category!");
+        //console.log("POST SUCCESS! Delete Category!");
         //console.log(request.body.id);
         //console.log(typeof request.body.id);
         const catID = request.body.id;
@@ -392,13 +393,13 @@ export default class Controller {
 
 
         if (length == 0) {
-            await Category.deleteOne({ _id: catID }).then(console.log("deleted category"));
+            await Category.deleteOne({ _id: catID });
         } else {
             const arrayProd = requestedProductId.products;
             for await (const element of arrayProd) {
-                await Product.deleteOne({ _id: element }).then(console.log("product deleted"));
+                await Product.deleteOne({ _id: element });
             }
-            await Category.deleteOne({ _id: catID }).then(console.log("deleted category"));
+            await Category.deleteOne({ _id: catID });
         }
 
     }

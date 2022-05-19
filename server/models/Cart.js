@@ -105,17 +105,34 @@ class Cart {
       style: "currency",
       currency: "USD",
     });
+    let tot_count = 0;
+    //console.log("NEW LOOP");
+    let removal = []
     for (let id of this.products) {
       const product = await Store.findProduct(id);
-      if (product == undefined)
+      if (product != undefined) {
+        id = product['_id'];
+        const quantity = this.getQuantity(id);
+        const title = product.title;
+        const price = dollarUS.format(product.price);
+        totalCost += product.price * quantity;
+        //tot_count += quantity;
+        tot_count += quantity;
+        //console.log("" + id + " seen.. quantity: " + quantity + " new total quantitiy: " + tot_count);
+        allProducts.push({ id, title, price, quantity });
+      } else {
+        removal.push(id);
+        //console.log("Undefined: " + id + " removed.. quantity: " + cur_q + " new total quantitiy: " + tot_count);
         continue;
-      id = product['_id'];
-      const quantity = this.getQuantity(id);
-      const title = product.title;
-      const price = dollarUS.format(product.price);
-      totalCost += product.price * quantity;
-      allProducts.push({ id, title, price, quantity });
+      }
     }
+    for (let index in removal) {
+      let product = removal[index];
+      this.products.splice(product, 1);
+      this.quantities.delete(product);
+    }
+    this.totalQuantity = tot_count;
+    await this.save();
     totalCost = dollarUS.format(totalCost);
     return { allProducts, totalCost };
   }
