@@ -1,6 +1,18 @@
 const displayStore = (categories, products, cat) => {
-    document.getElementById("categories-container").innerHTML = "";
-    document.getElementById("products-container").innerHTML = "";
+    document.getElementById("store-front-meta").innerHTML = `<div class="row mt-5 text-center">
+    <div class="col">
+        <div class="card mb-2" style="max-width: 18rem; margin-left: 60px;">
+            <ul class="list-group list-group-flush">
+                <div id="categories-container">
+                </div>
+            </ul>
+        </div>
+    </div>
+    <div class="col">
+        <div id="products-container" class="row ms-5">
+        </div>
+    </div>
+</div>`;
     let active = undefined;
     for (const category in categories) {
         let data = categories[category];
@@ -36,7 +48,7 @@ const displayStore = (categories, products, cat) => {
             title +
             `">
             <div class="card-body">
-                <h5 class="card-title" style= "color:white";>` +
+                <h5 class="ms-0 card-title text-dark">` +
             title +
             `</h5>
                 <p class="card-text">` +
@@ -54,14 +66,15 @@ const displayStore = (categories, products, cat) => {
     addController('home');
 }
 const displayAdmin = (attributes) => {
-    document.getElementById("categories-container").innerHTML = "";
-    document.getElementById("products-container").innerHTML = "";
-    loadAdminPage();
+    document.getElementById("store-front-meta").innerHTML = ``;
+    document.getElementById("view").innerHTML = `<div id="addProduct"></div>
+    <div class="grid container-fluid" id="muuri"></div>
+    <div id="editProduct"></div>`;
 }
-const homeButton = (attributes) => {
+const homeButton = async (attributes) => {
     document.getElementById("categoryPage").innerHTML = "";
     document.getElementById("view").innerHTML = "";
-    getStore();
+    await getStore();
 }
 const displayOptions = () => {
     const widget = document.getElementById('auth-status-button');
@@ -90,14 +103,14 @@ const displayLoginAttempt = (message) => {
         password_err.innerHTML = `The password entered is incorrect!`;
     } else if (message.includes('authenticated')) {
         document.getElementById('login-modal-close').click();
-        renderCart();
+        getStore(undefined, true);
+        //renderCart();
     }
 }
 
 const renderCart = () => {
     const widget = document.getElementById('auth-status-button');
     const content = document.getElementById('modal-content');
-
     widget.innerHTML = `<button type="button" class="btn" style="color: white;" id="checkout" data-bs-toggle="modal"
         data-bs-target="#staticBackdrop">
         <i class="bi bi-cart"> </i>Checkout
@@ -114,7 +127,7 @@ const renderCart = () => {
             <p>
                 <!--<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>-->
                 <div id="paypal-button-container"></div>
-        </div>`
+        </div>`;
     addController("checkout");
 }
 
@@ -144,6 +157,11 @@ function showLogin() {
         </div>`;
     addController("login-button");
     addController("show-register");
+}
+
+function forceOpenLogin() {
+    const modal = document.getElementById('login-show');
+    modal.click();
 }
 
 function showRegister() {
@@ -295,7 +313,6 @@ const categories = () => {
 const renderViewDOM = (html) => document.getElementById("view").innerHTML = html;
 const reloadAdminPage = function () {
     grid.refreshItems();
-    renderViewDOM(``);
     renderViewDOM(`
         <div id="addProduct"></div>
         <div id="editProduct"></div>

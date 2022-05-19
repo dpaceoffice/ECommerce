@@ -11,17 +11,23 @@ const userRefresh = (data) => {
     setCheckout(data.count);
     setCartDisplay(data.details.allProducts, data.details.totalCost);
 }
+var storeRendering = false;
 async function getStore(cat = undefined, init = false) {
-    const response = await fetch(`http://localhost:3000/store-data`);
-    const data = await response.json();
-    const authenticated = (data.user != undefined);
-    displayStore(data.cstate, data.pstate, cat);
-    if (authenticated) {
-        if (init)
-            renderCart();
-        userRefresh(data);
-    } else
-        displayOptions();
+    if (!storeRendering) {
+        storeRendering = true;
+        const response = await fetch(`http://localhost:3000/store-data`);
+        const data = await response.json();
+        const authenticated = (data.user != undefined);
+        displayStore(data.cstate, data.pstate, cat);
+        if (authenticated) {
+            if (init)
+                renderCart();
+            userRefresh(data);
+        } else
+            if (cat == undefined)
+                displayOptions();
+        storeRendering = false;
+    }
 }
 
 async function handleLogin() {
@@ -46,7 +52,8 @@ async function addProductToCart(attributes) {
     if (data.count != undefined) {
         userRefresh(data);
     } else
-        alert("Please sign in to add products to a cart.");
+        forceOpenLogin();
+    //alert("Please sign in to add products to a cart.");
 
 }
 async function removeProductFromCart(attributes) {
