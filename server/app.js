@@ -22,7 +22,7 @@ else {
 }
 
 const app = express();
-const port = process.env.PORT | 3000;
+const port = process.env.PORT | 5000;
 
 const routes = new Router().getRouter();
 function setupApp() {
