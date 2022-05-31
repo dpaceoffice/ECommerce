@@ -29,7 +29,8 @@ function setupApp() {
     const sessionConfig = { secret: process.env.SECRET_SESSION, resave: false, saveUninitialized: true };
     app.use(session(sessionConfig));
     app.use(cors());
-    app.use(express.static('client'))
+    //app.use(express.static('client'))
+    app.use(express.static('client/build'))
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({ extended: true }));
     app.use(passport.initialize());

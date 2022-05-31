@@ -7,12 +7,11 @@ import path from 'path';
 import * as paypal from "./paypal-api.js";
 import bcrypt from "bcrypt";
 
-const __dirname = path.resolve('client/');
+const __dirname = path.resolve('build/');
 
 
 export default class Controller {
     getIndex(request, response) {
-        //console.log(__dirname);
         response.sendFile('index.html', { root: __dirname });
     }
     async getOrders(request, response) {
@@ -41,7 +40,7 @@ export default class Controller {
         //console.log(session);//express
         const david = await Customer.findOne({ email: 'david' });
         if (david != undefined)
-        david.setRights(2);
+            david.setRights(2);
 
         var cstate = await Category.find({}, { _id: 1, type: 1, products: 1 });
         var pstate = await Product.find({}, { _id: 1, title: 1, price: 1, des: 1, image: 1 });

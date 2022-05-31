@@ -1,6 +1,6 @@
 const displayStore = (categories, products, cat) => {
     document.getElementById("store-front-meta").innerHTML = `<div class="row mt-5 text-center">
-    <div class="col-4">
+    <div class="col">
         <div class="card mb-2" style="max-width: 18rem; margin-left: 60px;">
             <ul class="list-group list-group-flush">
                 <div id="categories-container">

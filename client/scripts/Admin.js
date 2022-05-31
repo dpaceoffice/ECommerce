@@ -1,8 +1,8 @@
 async function reloadAdmin(simple) {
     if (simple)
         await loadAdminPage().then(() => { console.log("Reload Called") });
+    await clearGrid();//possibily needs to be under reload admin
     await reloadAdminPage();
-    await clearGrid();
 }
 
 
