@@ -18,6 +18,7 @@ export default class Router {
 
         /**Login */
         router.post('/login', controller.login);
+        router.get('/logout', ensureAuth, controller.logout);
 
         /**Register*/
         router.post('/register', controller.register);
