@@ -6,12 +6,12 @@ import bcrypt from "bcrypt";
 async function authenticateUser(email, password, done) {
   const user = await Customer.findOne({ email: email });
   if (user == undefined) {
-    return done(null, false, { message: "no user with that email" });
+    return done(null, false, { message: "Are you tring to register? Try and register below." });
   }
   if (await bcrypt.compare(password, user.password)) {
     return done(null, user, { message: "user authenticated" });
   } else {
-    return done(null, false, { message: "password incorrect" });
+    return done(null, false, { message: "The password entered was incorrect. If you forgot your passord. You are unfortunately doomed." });
   }
 }
 
