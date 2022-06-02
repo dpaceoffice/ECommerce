@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PayPalCheckout from './PaypalCheckout';
 
 
 export default class Checkout extends Component {
@@ -43,7 +44,7 @@ export default class Checkout extends Component {
             <div class="modal-footer">
                 <p id="cost-label" className="bi-text-left me-5">{total}
                 </p>
-                <div id="paypal-button-container"></div>
+                <div id="paypal-button-container"><PayPalCheckout /></div>
             </div>
         </div>);
     }

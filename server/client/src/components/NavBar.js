@@ -30,6 +30,7 @@ class NavBar extends Component {
         }
     }
 
+
     render() {
         const data = this.props.data;
         const authenticated = (data.user !== undefined);
