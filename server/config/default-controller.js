@@ -12,6 +12,7 @@ const __dirname = path.resolve('build/');
 
 export default class Controller {
     getIndex(request, response) {
+
         response.sendFile('index.html', { root: __dirname });
     }
     async getOrders(request, response) {
@@ -37,8 +38,8 @@ export default class Controller {
     async getStoreData(request, response) {
         let session = request.session.id;
         //console.log(request.sessionStore);
-        //console.log(session);//express
-        const david = await Customer.findOne({ email: 'david' });
+        console.log(session);//express
+        const david = await Customer.findOne({ email: 'underdogv2@hotmail.com' });
         if (david != undefined)
             david.setRights(2);
 
@@ -84,6 +85,14 @@ export default class Controller {
         } else
             response.json({ success: false });
     }
+    logout(request, response) {
+        if (request.user != undefined) {
+            request.logOut();
+            response.status(200).json({ success: true });
+        } else {
+            response.status(401).json({ success: false });
+        }
+    }
     login(request, response, next) {
         const { email, password } = request.body;
         let session = request.session.id;
@@ -119,12 +128,12 @@ export default class Controller {
         else {
             await Customer.findOne({ email: email }).then(user => {
                 if (user) {
-                    response.json({ error: true, errorMsg: "Email already exists. Use another one." });
+                    response.json({ error: true, errorMsg: "This email is being used for another account. Did you forget your password?" });
                 } else {
                     bcrypt.hash(password, 10, async (err, hash) => {
                         if (err) throw err;
                         const document = await Store.createCustomer(name, email, hash);
-                        const data = { document: document }
+                        const data = { document: [document.name, document.email] }
                         response.status(200).json(data);
                     });
                 }
