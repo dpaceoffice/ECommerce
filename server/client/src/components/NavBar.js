@@ -4,6 +4,7 @@ import 'bootstrap/dist/js/bootstrap.js';
 import '../styles/NavBar.css';
 import Register from './Register';
 import Login from './Login';
+import Checkout from './Checkout';
 import React, { Component } from 'react';
 const REG_VIEW = 1;
 const LOGIN_VIEW = 0;
@@ -21,15 +22,31 @@ class NavBar extends Component {
         }
     }
 
+    handleLogout = async () => {
+        const response = await fetch(`http://localhost:5000/logout/`);
+        if (response.status === 200) {
+            this.setState({ modal: LOGIN_VIEW });
+            this.props.updateStatus();
+        }
+    }
+
     render() {
         const data = this.props.data;
         const authenticated = (data.user !== undefined);
-
-        let auth_button = <button type="button" className="btn" style={{ color: 'white' }} id="login-show" data-bs-toggle="modal"
+        let auth_button = <button ref={this.props.setModal} type="button" className="nav-link" style={{ color: 'white' }} id="login-show" data-bs-toggle="modal"
             data-bs-target="#staticBackdrop">
-            <i id='login-modal' className="bi bi-cart"> </i>{authenticated ? 'Checkout' : 'Login'}
+            <i id='login-modal' className="bi bi-cart"> </i>{authenticated ? data.count > 0 ? 'Checkout - ' + data.count : 'Checkout' : 'Login'}
         </button>;
-        let modal_content = (this.state.modal === REG_VIEW) ? <Register swap={this.swap_modal} /> : <Login swap={this.swap_modal} />;
+        let modal_content = (this.state.modal === REG_VIEW) ? <Register swap={this.swap_modal} /> : <Login updateStatus={this.props.updateStatus} swap={this.swap_modal} />;
+        let logout = <></>;
+        let profile = <></>;
+        if (authenticated && data !== null) {
+            modal_content = <Checkout reload={this.props.updateStatus} data={data} />
+            logout = <button style={{ color: 'white' }} onClick={this.handleLogout} className="nav-link"><i className="bi bi-door-closed"></i></button>
+            profile = <button className="nav-link" id="user-profile-button" style={{ color: 'white' }}>
+                <i className="bi bi-person-fill"></i>
+            </button>;
+        }
 
         return (
             <div className="NavBar" >
@@ -44,19 +61,15 @@ class NavBar extends Component {
                     <div className="collapse navbar-collapse" id="navbar-options">
                         <ul className="navbar-nav ms-auto">
                             <li className="nav-item">
-                                <button className="nav-link" style={{ color: 'white' }}>
-                                    <i className="bi bi-search"></i>
-                                </button>
-                            </li>
-                            <li className="nav-item">
-                                <button className="nav-link" id="user-profile-button" style={{ color: 'white' }}>
-                                    <i className="bi bi-person-fill"></i>
-                                </button>
-                            </li>
-                            <li className="nav-item">
                                 <div id="auth-status-button">
                                     {auth_button}
                                 </div>
+                            </li>
+                            <li className="nav-item">
+                                {profile}
+                            </li>
+                            <li className="nav-item">
+                                {logout}
                             </li>
                         </ul>
                     </div>
