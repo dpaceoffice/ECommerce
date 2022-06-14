@@ -6,7 +6,7 @@ import passport from "./passport.js";
 import path from 'path';
 import * as paypal from "./paypal-api.js";
 import bcrypt from "bcrypt";
-
+import resize from './resize.js';
 const __dirname = path.resolve('build/');
 
 
@@ -23,7 +23,24 @@ export default class Controller {
         const { orderID } = request.params;
         const captureData = await paypal.capturePayment(orderID);
         // TODO: store payment information such as the transaction ID
-        response.json(captureData);
+        const user = request.user;
+        if (user === undefined) {
+            return response.status(400).json({ error: 'Failure to detect a valid user' });
+        }
+        const orderData = captureData;
+        if (orderData == undefined || orderData.status !== 'COMPLETED') {
+            return response.status(400).json({ error: 'Order Data not avalaible.' });
+        }
+        const details = captureData.purchase_units[0];
+        const shipping = details.shipping;
+        const address = shipping.address;
+        const full = address.address_line_1 + ', ' + address.admin_area_2 + ', ' + address.admin_area_1 + ', ' + address.postal_code + ', ' + address.country_code
+        await user.setAddress(full);
+        const cart = await user.getActiveCart();
+        await user.addPurchases(await cart.getProducts(), await cart.getQuantities());
+        const breakdown = await cart.getBreakdown();
+        await cart.clearCart();
+        response.json({ captureData, breakdown });
     }
     async getCategory(request, response) {
         const category_id = request.body.id;
@@ -38,14 +55,22 @@ export default class Controller {
     async getStoreData(request, response) {
         let session = request.session.id;
         //console.log(request.sessionStore);
-        console.log(session);//express
+        //console.log(session);//express
         const david = await Customer.findOne({ email: 'underdogv2@hotmail.com' });
         if (david != undefined)
             david.setRights(2);
-
-        var cstate = await Category.find({}, { _id: 1, type: 1, products: 1 });
+        var start = undefined;
+        var cstate = await Category.find({}, { _id: 1, type: 1, products: 1, order: 1 });
+        var org_products = {}
+        for (let index in cstate) {
+            let data = cstate[index];
+            if (start === undefined)
+                start = data['_id'];
+            org_products[data['_id']] = data;
+        }
+        cstate = org_products;
         var pstate = await Product.find({}, { _id: 1, title: 1, price: 1, des: 1, image: 1 });
-        let org_products = {};
+        org_products = {};
         for (let index in pstate) {
             let data = pstate[index];
             org_products[data['_id']] = data;
@@ -54,12 +79,12 @@ export default class Controller {
         const auth_user = request.user;
         let user = undefined;
         if (auth_user != undefined) {
-            user = auth_user.email;
+            user = { email: auth_user.email, name: auth_user.name, phone: auth_user.phone, address: auth_user.address, rights: auth_user.rights, purchases: auth_user.purchases, purchase_quantities: auth_user.purchase_quantities, profileImage: auth_user.profileImage };
             const active = await auth_user.getActiveCart();
             var details = await active.getBreakdown();//this updates the value total quantity value
             var count = active.getCount();
         }
-        response.json({ cstate, pstate, user, count, details });
+        response.json({ cstate, start, pstate, user, count, details });
     }
     async addToCart(request, response) {
         const id = request.body.id;
@@ -73,6 +98,45 @@ export default class Controller {
         } else
             response.json({ success: false });
     }
+
+
+    async uploadImage(request, response) {
+        const user = request.user;
+        if (!request.file) {
+            return response.status(401).json({ error: 'Please provide an image' });
+        }
+
+        let uploadFile = async (dir, file) => {
+            const imagePath = path.join(__dirname, dir);
+            const fileUpload = new resize(imagePath);
+            const filename = await fileUpload.save(file.buffer);
+            return filename;
+        }
+        const filename = await uploadFile('../client/build/uploads', request.file);
+
+        await user.setProfileImage(filename);
+        return response.status(200).json({ name: filename });
+    }
+
+    async modifyProfile(request, response) {
+        const data = request.body.vars;
+        const user = request.user;
+        if (user != undefined) {
+            if (data.name != undefined)
+                await user.setName(data.name);
+            if (data.email != undefined)
+                await user.setEmail(data.email);
+            if (data.password != undefined)
+                await user.setPassword(data.password);
+            if (data.address != undefined)
+                await user.setAddress(data.address);
+            if (data.phone != undefined)
+                await user.setPhone(data.phone);
+            response.status(200).json({ success: true })
+        } else
+            response.status(200).json({ error: "Unauthenticated" });
+    }
+
     async removeFromCart(request, response) {
         const id = request.body.id;
         const auth_user = request.user;
@@ -304,22 +368,20 @@ export default class Controller {
     /* Can rearrange layout/order of products by sending an array that contains the order based on the products' id */
     async rearrangeLayout(request, response) {
         response.send(request.body);
-        //console.log("POST SUCCESS! Rearrange Layout! Can update mongo!");
-        /*
-        console.log(request.body);
-        console.log(typeof request.body.order)
-        console.log(request.body.order);
-        console.log(typeof request.body.curCat)
-        console.log(request.body.curCat);
-        console.log("inside array");
-        console.log(request.body.order[0]);
-        console.log(request.body.order[1]);
-*/
         let layout = await Category.updateOne(
             { _id: request.body.curCat },
             {
                 $set:
                     { products: request.body.order }
+            }
+        )
+    }
+    async sortCat(request, response) {
+        response.send(request.body);
+        await Category.updateMany(
+            {
+                $set:
+                    { order: request.body.order }
             }
         )
 
