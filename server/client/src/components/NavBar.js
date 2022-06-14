@@ -23,7 +23,7 @@ class NavBar extends Component {
     }
 
     handleLogout = async () => {
-        const response = await fetch(`http://localhost:5000/logout/`);
+        const response = await fetch(`/logout/`);
         if (response.status === 200) {
             this.setState({ modal: LOGIN_VIEW });
             this.props.updateStatus();
@@ -42,9 +42,9 @@ class NavBar extends Component {
         let logout = <></>;
         let profile = <></>;
         if (authenticated && data !== null) {
-            modal_content = <Checkout reload={this.props.updateStatus} data={data} />
+            modal_content = <Checkout showSuccess={this.props.showSuccess} reload={this.props.updateStatus} data={data} />
             logout = <button style={{ color: 'white' }} onClick={this.handleLogout} className="nav-link"><i className="bi bi-door-closed"></i></button>
-            profile = <button className="nav-link" id="user-profile-button" style={{ color: 'white' }}>
+            profile = <button className="nav-link" onClick={this.props.showProfile} id="user-profile-button" style={{ color: 'white' }}>
                 <i className="bi bi-person-fill"></i>
             </button>;
         }
@@ -52,7 +52,7 @@ class NavBar extends Component {
         return (
             <div className="NavBar" >
                 <nav className="navbar navbar-expand-sm navbar-light container-fluid" style={{ backgroundColor: '#709a71' }}>
-                    <button className="navbar-brand" style={{ color: 'white' }} id="home">
+                    <button className="navbar-brand" onClick={this.props.showStore} style={{ color: 'white' }} id="home">
                         <i className="bi bi-house" style={{ paddingLeft: '1rem' }}></i>
                     </button>
                     <button className="navbar-toggler" style={{ backgroundColor: '#d2e2d8' }} data-bs-toggle="collapse"
