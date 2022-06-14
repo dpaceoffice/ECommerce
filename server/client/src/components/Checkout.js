@@ -13,7 +13,7 @@ export default class Checkout extends Component {
         config.method = "POST";
         config.headers = { 'Content-Type': 'application/json' };
         config.body = JSON.stringify({ id });
-        const response = await fetch(`http://localhost:5000/remove-product/`, config);
+        const response = await fetch(`/remove-product/`, config);
         const data = await response.json();
         if (data.count !== undefined)
             this.props.reload();
@@ -44,7 +44,7 @@ export default class Checkout extends Component {
             <div class="modal-footer">
                 <p id="cost-label" className="bi-text-left me-5">{total}
                 </p>
-                <div id="paypal-button-container"><PayPalCheckout /></div>
+                <div id="paypal-button-container"><PayPalCheckout showSuccess={this.props.showSuccess} reload={this.props.reload} /></div>
             </div>
         </div>);
     }
