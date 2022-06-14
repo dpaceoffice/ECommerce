@@ -8,12 +8,16 @@ const Schema = mongoose.Schema;
  */
 const categorySchema = new Schema({
   type: String,
+  order: [{ type: Schema.ObjectId, ref: 'Category' }],
   products: [{ type: Schema.ObjectId, ref: 'Product' }],
 });
 /**
  * Category Object
  */
 class Category {
+  getOrder() {
+    return this.order;
+  }
   /**
    * Category string name
    * @returns The category name
