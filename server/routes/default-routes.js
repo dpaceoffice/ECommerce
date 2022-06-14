@@ -1,7 +1,8 @@
 import Controller from "../config/default-controller.js";
 import { ensureAdmin, ensureAuth } from "../config/auth.js";
 import express from 'express';
-
+import upload from '../config/upload.js';
+import openAi from '../config/openAi.js';
 
 export default class Router {
     #router
@@ -11,7 +12,8 @@ export default class Router {
         const controller = new Controller();
         router.get('/', controller.getIndex);
         router.get('/store-data', controller.getStoreData);
-
+        /**OPENAI Prompt request */
+        router.post('/openai/prompt/', openAi);
         /**Shopping Cart */
         router.post('/add-product', ensureAuth, controller.addToCart);
         router.post('/remove-product', ensureAuth, controller.removeFromCart);
@@ -19,6 +21,10 @@ export default class Router {
         /**Login */
         router.post('/login', controller.login);
         router.get('/logout', ensureAuth, controller.logout);
+
+        /**Modify Profile */
+        router.post('/profile/image', ensureAuth, upload, controller.uploadImage)
+        router.post('/profile/modify', ensureAuth, controller.modifyProfile)
 
         /**Register*/
         router.post('/register', controller.register);
@@ -40,6 +46,7 @@ export default class Router {
         router.get('/admin', ensureAdmin, controller.loadAdmin);
         router.post('/admin/addProduct', ensureAdmin, controller.addProduct);
         router.post('/admin/rearrangeLayout', ensureAdmin, controller.rearrangeLayout);
+        router.post('/admin/sortCat', ensureAdmin, controller.sortCat);
         router.post('/admin/removeProduct', ensureAdmin, controller.removeProduct);
         router.get('/admin/productById/:id', ensureAdmin, controller.productById);
         router.post('/admin/editProduct', ensureAdmin, controller.editProduct);
