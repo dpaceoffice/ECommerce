@@ -22,7 +22,14 @@ const cartSchema = new Schema({
  * Cart object
  */
 class Cart {
-
+  /**
+   * Clears the shopping cart
+   */
+  async clearCart() {
+    this.products = [];
+    this.quantities = [];
+    await this.save();
+  }
   /**
    *
    * @returns map of products and their quantities
