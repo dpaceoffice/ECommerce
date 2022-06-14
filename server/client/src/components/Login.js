@@ -15,7 +15,7 @@ export default class Login extends Component {
             config.headers = { 'Content-Type': 'application/json' };
             config.body = JSON.stringify({ email: email, password: password });
 
-            const response = await fetch(`http://localhost:5000/login/`, config);
+            const response = await fetch(`/login/`, config);
             const data = await response.json();
             const error = data.message;
             if (error !== 'user authenticated')
