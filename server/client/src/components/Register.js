@@ -12,7 +12,7 @@ export default class Register extends Component {
             config.method = "POST";
             config.headers = { 'Content-Type': 'application/json' };
             config.body = JSON.stringify({ 'name': this.state.name, 'email': this.state.email, 'password': this.state.password });
-            const response = await fetch("http://localhost:5000/register", config);
+            const response = await fetch("/register", config);
             const data = await response.json();
 
             if (data.error) {
@@ -24,7 +24,6 @@ export default class Register extends Component {
         } catch (error) {
             console.log(error.stack);
         }
-
     }
     handleEnter = (event) => {
         if (event.key.toLowerCase() === "enter") {
