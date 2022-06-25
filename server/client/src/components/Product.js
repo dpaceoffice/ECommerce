@@ -21,7 +21,7 @@ export default class Product extends Component {
     }
 
     modifyProduct = async () => {
-        this.props.swapMove();
+        this.props.swapMove(this.props.id);
         this.setState({ view: this.MODIFY });
     }
 
@@ -37,7 +37,7 @@ export default class Product extends Component {
             descField = [<p className="card-text">{this.props.desc}</p>, <textarea className="form-control mb-2" type='text' placeholder={this.state.desc} onKeyPress={this.handleEnter} onChange={(e) => this.setState({ desc: e.target.value })} />];
             priceField = [<p className="card-text">{this.props.price}</p>, <input className="form-control mb-2" type='text' placeholder={this.state.price} onKeyPress={this.handleEnter} onChange={(e) => this.setState({ price: e.target.value })} />];
             button = [<><a className="btn me-2" onClick={async () => { this.modifyProduct() }} style={{ backgroundColor: '#577a58', color: "white" }}>Modify</a>
-                <a className="btn" onClick={async () => { }} style={{ backgroundColor: '#577a58', color: "white" }}>Delete</a></>, <a className="btn me-2" onClick={async () => { this.setState({ view: this.DEFAULT }); this.props.swapMove(); }} style={{ backgroundColor: '#577a58', color: "white" }}>Save</a>];
+                <a className="btn" onClick={async () => { }} style={{ backgroundColor: '#577a58', color: "white" }}>Delete</a></>, <a className="btn me-2" onClick={async () => { this.setState({ view: this.DEFAULT }); this.props.swapMove(this.props.id); }} style={{ backgroundColor: '#577a58', color: "white" }}>Save</a>];
         }
         let view = <div key={this.props.id} className="col" style={{ maxWidth: '18rem', marginLeft: '60px' }}>
             <div className="card mb-3" style={{ filter: 'drop-shadow(7px 7px 0px #597658)', width: '18rem', borderWidth: 'thick', borderStyle: 'solid', borderColor: '#709a71', background: '#709a71' }}>
