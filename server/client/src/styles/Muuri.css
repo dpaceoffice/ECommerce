@@ -1,0 +1,16 @@
+.item {
+    color: white;
+    cursor: pointer;
+  }
+   
+  .muuri-item-dragging {
+    z-index: 3;   /* Required by Muuri */
+  }
+   
+  .muuri-item-releasing {
+    z-index: 2; /* Required by Muuri */
+  }
+   
+  .muuri-item-hidden {
+    z-index: 0; /* Required by Muuri */
+  }
