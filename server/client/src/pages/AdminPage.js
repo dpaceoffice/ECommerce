@@ -6,10 +6,31 @@ import Product from '../components/Product';
 export default class AdminPage extends Component {
     constructor() {
         super();
-        this.state = { ctg: undefined, updateOrder: this.updateOrder, updateCatOrder: this.updateCatOrder, allowMove: true };
+        this.blockMove = []
+        this.pendingReload = false;
+        this.state = { ctg: undefined, updateOrder: this.updateOrder, updateCatOrder: this.updateCatOrder };
     }
-    swapMove = () => { this.setState({ allowMove: !this.state.allowMove }); };
 
+    swapMove = (id) => {
+        let blockMove = this.blockMove;
+        if (blockMove.includes(id)) {
+            this.blockMove = blockMove.filter(e => e !== id);
+        } else {
+            blockMove.push(id);
+        }
+    };
+
+    getKey(item) {
+        for (let key in item.getElement()) {
+            let value = item.getElement()[key];
+            if (key.includes('__reactProps$')) {
+                let key = value.children.props.children.key;
+                if (key !== 'blankboi')
+                    return key;
+            }
+        }
+        return null;
+    }
     updateOrder = async (order) => {
         const config = new Object();
         config.method = "POST";
@@ -17,7 +38,8 @@ export default class AdminPage extends Component {
         config.body = JSON.stringify({ curCat: this.state.ctg, order: order });
         const response = await fetch("/admin/rearrangeLayout", config);
         const data = await response.json();
-        console.log(data);
+        if (data)
+            this.pendingReload = true;
     }
     updateCatOrder = async (order) => {
         const config = new Object();
@@ -26,9 +48,12 @@ export default class AdminPage extends Component {
         config.body = JSON.stringify({ order: order });
         const response = await fetch("/admin/sortcat", config);
         const data = await response.json();
-        console.log(data);
+        if (data)
+            this.pendingReload = true;
     }
-
+    componentDidMount = async () => {
+        this.props.reload();
+    }
     render() {
         let active = undefined;
         const categories = this.props.data.cstate;
@@ -38,12 +63,33 @@ export default class AdminPage extends Component {
         }
         const products = this.props.data.pstate;
         let category_inner = [];
+        let html = undefined;
         let populate = (data, id, type) => {
+            this.blockMove = [];
             if (this.state.ctg == undefined)
-                this.state.ctg = id;
+                this.setState({ ctg: id });
             if (id === this.state.ctg)
                 active = data['products']
-            category_inner.push(<DraggableItem key={id}> <li key={id} onClick={async () => { await this.props.reload(); this.setState({ ctg: id }) }} className="btn list-group-item">{type}</li></DraggableItem>);
+            if (id === this.state.ctg) {
+                html = <DraggableItem key={id}> <li key={id} onClick={async () => {
+                    if (this.state.ctg != id) {
+                        // if (this.pendingReload) {//Ensures that any fundamental changes on the backend are synced
+                        this.props.reload();
+                        // }
+                        this.setState({ ctg: id });
+                    }
+                }} className="btn btn-success list-group-item">{type}</li></DraggableItem>;
+            } else {
+                html = <DraggableItem key={id}> <li key={id} onClick={async () => {
+                    if (this.state.ctg != id) {
+                        // if (this.pendingReload) {//Ensures that any fundamental changes on the backend are synced
+                        this.props.reload();
+                        // }
+                        this.setState({ ctg: id });
+                    }
+                }} className="btn list-group-item">{type}</li></DraggableItem>;
+            }
+            category_inner.push(html);
 
         }
         if (cat_order == undefined)
@@ -113,24 +159,34 @@ export default class AdminPage extends Component {
                                         alignBottom: false,
                                         rounding: false
                                     }}
-
-                                    onDragEnd={async (item, event) => {
-                                        const grid = await item.getGrid();
-                                        const items = await grid.getItems();
-                                        //console.log(item);
-                                        //console.log(event);                            
-                                        const keys = [];
-                                        for (let i in items) {
-                                            item = items[i];
-                                            for (let key in item.getElement()) {
-                                                let value = item.getElement()[key];
-                                                //console.log(item.getElement());
-                                                if (key.includes('__reactProps$'))
-                                                    keys.push(value.children.props.children[1].key);
+                                    dragStartPredicate={(item, event) => {
+                                        let key = undefined;
+                                        event = event.target;
+                                        for (key in event) {
+                                            if (key.includes('__reactFiber$')) {
+                                                key = event[key].key;
+                                                break;
                                             }
                                         }
-                                        await state.updateCatOrder(keys);
-
+                                        return this.state.ctg === key;
+                                    }}
+                                    onDragEnd={async (item, event) => {
+                                        if (event.distance > 0) {
+                                            const grid = await item.getGrid();
+                                            const items = await grid.getItems();
+                                            console.log(event);
+                                            const keys = [];
+                                            for (let i in items) {
+                                                item = items[i];
+                                                for (let key in item.getElement()) {
+                                                    let value = item.getElement()[key];
+                                                    //console.log(item.getElement());
+                                                    if (key.includes('__reactProps$'))
+                                                        keys.push(value.children.props.children[1].key);
+                                                }
+                                            }
+                                            await state.updateCatOrder(keys);
+                                        }
                                     }}>
                                     {category_inner}
                                 </DraggableGrid>
@@ -146,26 +202,30 @@ export default class AdminPage extends Component {
                             dragSortPredicate={{
                                 action: "swap"
                             }}
-                            dragStartPredicate={(item, event) => { return this.state.allowMove; }}
+                            dragStartPredicate={(item, event) => {
+                                return !this.blockMove.includes(this.getKey(item));
+                            }}
                             dragSortHeuristics={{
                                 sortInterval: 0
                             }}
                             onDragEnd={async (item, event) => {
-                                const grid = await item.getGrid();
-                                const items = await grid.getItems();
-                                const keys = [];
-                                for (let i in items) {
-                                    item = items[i];
-                                    for (let key in item.getElement()) {
-                                        let value = item.getElement()[key];
-                                        if (key.includes('__reactProps$')) {
-                                            let key = value.children.props.children.key;
-                                            if (key !== 'blankboi')
-                                                keys.push(key);
+                                if (event.distance > 0) {
+                                    const grid = await item.getGrid();
+                                    const items = await grid.getItems();
+                                    const keys = [];
+                                    for (let i in items) {
+                                        item = items[i];
+                                        for (let key in item.getElement()) {
+                                            let value = item.getElement()[key];
+                                            if (key.includes('__reactProps$')) {
+                                                let key = value.children.props.children.key;
+                                                if (key !== 'blankboi')
+                                                    keys.push(key);
+                                            }
                                         }
                                     }
+                                    await state.updateOrder(keys);
                                 }
-                                await state.updateOrder(keys);
                             }}>
                             {children}
                             {blank}
