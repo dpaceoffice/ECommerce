@@ -39,6 +39,8 @@ export default class PayPalCheckout extends React.Component {
 
 
     render() {
+        if (window.paypal === undefined)
+            return 'Unavaliable';
         const view = <PayPalScriptProvider options={{ "client-id": "AaRWL--7t5wev93pXfPXnpfWIEMNOdE2Wd25qY9dqyy1kv55VePvnAnF6khosP8_gN7CkG7ZxJqn3sSL" }}>
             <PayPalButtons
                 fundingSource={window.paypal.FUNDING.PAYPAL}
