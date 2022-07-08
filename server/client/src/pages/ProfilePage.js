@@ -71,6 +71,7 @@ export default class ProfilePage extends Component {
             this.setState({ view: this.DISPLAY })
         }
     }
+
     onFileChange = async (event) => {
         var file = event.target.files[0];
 
@@ -154,6 +155,8 @@ export default class ProfilePage extends Component {
         const product_ids = this.props.data.pstate;
         for (const purchase of user.purchases) {
             const product = product_ids[purchase];
+            if (product === undefined)
+                continue;
             const quantity = user.purchase_quantities[purchase];
             purchase_list.push(<p>{product.title} - ${product.price} x {quantity}</p>)
         }
