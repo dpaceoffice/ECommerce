@@ -53,6 +53,7 @@ export default class Router {
         router.get('/admin/getCategoriesIds', ensureAdmin, controller.getCategoriesIds);
         router.get('/admin/requestCatProducts/:id/:type', ensureAdmin, controller.returnCatProducts)
         router.post('/admin/deleteCategory', ensureAdmin, controller.deleteCategory);
+        router.post('/admin/image', ensureAdmin, upload, controller.uploadAdminImage)
 
         /*^^^^ ADMINISTRATION CODE ^^^^*/
     }
