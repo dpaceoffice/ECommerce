@@ -7,6 +7,7 @@ import path from 'path';
 import * as paypal from "./paypal-api.js";
 import bcrypt from "bcrypt";
 import resize from './resize.js';
+import fs from 'fs';
 const __dirname = path.resolve('build/');
 
 
@@ -53,7 +54,7 @@ export default class Controller {
         return response.json({ products });
     }
     async getStoreData(request, response) {
-        let session = request.session.id;
+        //let session = request.session.id;
         //console.log(request.sessionStore);
         //console.log(session);//express
         const david = await Customer.findOne({ email: 'underdogv2@hotmail.com' });
@@ -100,20 +101,46 @@ export default class Controller {
     }
 
 
+
+    async uploadAdminImage(request, response) {
+        if (!request.file) {
+            return response.status(401).json({ error: 'Please provide an image' });
+        }
+        const uploadFile = async (dir, file) => {
+            const imagePath = path.join(__dirname, dir);
+            const fileUpload = new resize(imagePath);
+            const filename = await fileUpload.save(file.buffer);
+            return filename;
+        }
+        const filename = await uploadFile('../client/build/assets', request.file);
+        const loc = path.resolve(__dirname, '../client/build/assets/' + filename);
+        const dest = path.resolve(__dirname, '../client/public/assets/' + filename);
+        await fs.copyFile(loc, dest, (err) => {
+            if (err) throw err;
+            //console.log('File was copied to destination');
+        });
+        return response.status(200).json({ name: filename });
+    }
+
+
     async uploadImage(request, response) {
         const user = request.user;
         if (!request.file) {
             return response.status(401).json({ error: 'Please provide an image' });
         }
-
-        let uploadFile = async (dir, file) => {
+        const uploadFile = async (dir, file) => {
             const imagePath = path.join(__dirname, dir);
             const fileUpload = new resize(imagePath);
             const filename = await fileUpload.save(file.buffer);
             return filename;
         }
         const filename = await uploadFile('../client/build/uploads', request.file);
-
+        const loc = path.resolve(__dirname, '../client/build/uploads/' + filename);
+        const dest = path.resolve(__dirname, '../client/public/uploads/' + filename);
+        fs.copyFile(loc, dest, (err) => {
+            if (err) throw err;
+            //console.log('File was copied to destination');
+        });
         await user.setProfileImage(filename);
         return response.status(200).json({ name: filename });
     }
@@ -216,6 +243,12 @@ export default class Controller {
         if (authenticated_user == undefined || authenticated_user.rights < 2) {
             return response.sendStatus(403);
         }
+        await Category.deleteMany(
+            {}
+        )
+        await Product.deleteMany(
+            {}
+        )
         let katana = await Store.createProduct(
             "Katana",
             "A very very sharp sword used by samurai",
@@ -342,27 +375,24 @@ export default class Controller {
 
     /* Add new product object to mongodb by receiving the new product as JSON */
     async addProduct(request, response) {
-        response.send(request.body);
-        /*
-        console.log("POST SUCCESS! Added product! Can update mongo!");
-        console.log("Category: " + request.body[1])
-        console.log("PRODUCT: -----------------");
-        console.log(request.body[0]);
-        */
-        var product = await Store.createProduct(
-            request.body[0].title,
-            request.body[0].description,
-            request.body[0].price,
-            request.body[0].image
-        )
+        let data = request.body.vars;
+        if (data.title && data.desc && Number.isInteger(data.price) && data.image) {
+            var product = await Store.createProduct(
+                data.title,
+                data.desc,
+                data.price,
+                data.image
+            )
 
-        //console.log("Product : -----" + product);
-        await Category.updateOne(
-            { _id: request.body[1] },
-            { $push: { products: product } }
-        )
-
-
+            //console.log("Product : -----" + product);
+            await Category.updateOne(
+                { _id: data.ctg },
+                { $push: { products: product } }
+            )
+            response.send(request.body);
+        } else {
+            response.send({ error: "Missing essential data" });
+        }
     }
 
     /* Can rearrange layout/order of products by sending an array that contains the order based on the products' id */
@@ -390,12 +420,17 @@ export default class Controller {
     /* Remove product by receiving the product id from the client and removing it in mongodb */
     async removeProduct(request, response) {
         response.send(request.body);
-        /*
-        console.log("POST SUCCESS! Removed Product's ID: " + JSON.stringify(request.body));
-        console.log(request.body.id);
-        console.log(request.body.cat);
-        */
         let prodID = request.body.id;
+        let current = await Product.findOne({ _id: prodID });
+        let image = current.getImage();
+        const publicp = path.resolve(__dirname, '../client/public/' + image);
+        const build = path.resolve(__dirname, '../client/build/' + image);
+        fs.unlink(build, (err) => {
+            if (err) throw err;
+        });
+        fs.unlink(publicp, (err) => {
+            if (err) throw err;
+        });
         await Category.updateMany(
             {},
             { $pull: { products: { $in: [prodID] } } }
@@ -423,29 +458,21 @@ export default class Controller {
 
     /* Edit product information by client sending new changes as a product object to update product in mongodb */
     async editProduct(request, response) {
-        response.send(request.body);
-        /*
-        console.log("POST SUCCESS! Edit Product! Can update mongo!");
-        console.log(request.body);
-        console.log(request.body.id);
-        console.log(request.body.title);
-        console.log(request.body.description);
-        console.log(request.body.price);
-        console.log(request.body.image);
-        */
         // _id, title, des, price, image
-        let edit = await Product.updateMany(
-            { _id: request.body.id },
+        var product = request.body.vars;
+        var result = await Product.updateMany(
+            { _id: product.id },
             {
                 $set: {
-                    title: request.body.title,
-                    des: request.body.description,
-                    price: request.body.price,
-                    image: request.body.image
+                    title: product.title,
+                    des: product.desc,
+                    price: product.price,
+                    image: product.image
                 }
             }
         )
-        //console.log(edit);
+        response.send(result);
+
     }
 
     /* Delete categpry */
