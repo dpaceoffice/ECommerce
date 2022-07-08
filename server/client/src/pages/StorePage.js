@@ -25,7 +25,7 @@ export default class StorePage extends Component {
             category_inner.push(<li key={id} onClick={() => { this.setState({ ctg: id }) }} className="btn list-group-item">{type}</li>);
         }
         if (cat_order == undefined)
-            for (const category in category) {
+            for (const category in categories) {
                 const data = categories[category];
                 const id = data['_id'];
                 const type = data['type'];
@@ -56,8 +56,8 @@ export default class StorePage extends Component {
         }
 
         let html = <div><div className="row mt-5 text-center">
-            <div className="col-sm" style={{ maxWidth: '18rem', marginLeft: '60px' }}>
-                <div className="card mb-2" style={{ maxWidth: '18rem', marginLeft: '60px' }}>
+            <div className="col-sm" style={{ maxWidth: '25rem', marginLeft: '30px' }}>
+                <div className="card mb-2" style={{ maxWidth: '18rem', marginLeft: '30px' }}>
                     <ul className="list-group list-group-flush">
                         <div id="categories-container">
                             {category_inner}
@@ -66,7 +66,7 @@ export default class StorePage extends Component {
                 </div>
             </div>
             <div className="col-sm">
-                <div id="products-container" className="row ms-5">
+                <div id="products-container" className="row">
                     {products_inner}
                 </div>
             </div>
