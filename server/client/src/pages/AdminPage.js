@@ -3,18 +3,21 @@ import React, { Component } from 'react';
 import DraggableGrid, { DraggableItem } from 'ruuri';
 import Product from '../components/Product';
 
+
 export default class AdminPage extends Component {
     constructor() {
         super();
-        this.blockMove = []
-        this.pendingReload = false;
-        this.state = { ctg: undefined, updateOrder: this.updateOrder, updateCatOrder: this.updateCatOrder };
+        this.setModalRef = element => { this.setState({ modal: element }) };
+        this.productsContainer = React.createRef(null);
+        this.state = { ctg: undefined, updateOrder: this.updateOrder, updateCatOrder: this.updateCatOrder, deletePending: undefined, blockMove: [] };
     }
-
+    setDPend = (id) => {
+        this.setState({ deletePending: id });
+    }
     swapMove = (id) => {
-        let blockMove = this.blockMove;
+        let blockMove = this.state.blockMove;
         if (blockMove.includes(id)) {
-            this.blockMove = blockMove.filter(e => e !== id);
+            this.state.blockMove = blockMove.filter(e => e !== id);
         } else {
             blockMove.push(id);
         }
@@ -25,8 +28,7 @@ export default class AdminPage extends Component {
             let value = item.getElement()[key];
             if (key.includes('__reactProps$')) {
                 let key = value.children.props.children.key;
-                if (key !== 'blankboi')
-                    return key;
+                return key;
             }
         }
         return null;
@@ -41,6 +43,22 @@ export default class AdminPage extends Component {
         if (data)
             this.pendingReload = true;
     }
+
+    deleteProduct = async (id) => {
+        const config = new Object();
+        config.method = "POST";
+        config.headers = { 'Content-Type': 'application/json' };
+        config.body = JSON.stringify({ id });
+        const response = await fetch("/admin/removeProduct", config);
+        const data = await response.json();
+        if (data.error) {
+            alert(data.error);
+        } else {
+            this.state.modal.click();
+            this.props.reload();
+        }
+    }
+
     updateCatOrder = async (order) => {
         const config = new Object();
         config.method = "POST";
@@ -65,35 +83,32 @@ export default class AdminPage extends Component {
         let category_inner = [];
         let html = undefined;
         let populate = (data, id, type) => {
-            this.blockMove = [];
+            if (this.state.blockMove.includes('blankboi'))
+                this.state.blockMove = ['blankboi'];
+            else
+                this.state.blockMove = [];
             if (this.state.ctg == undefined)
-                this.setState({ ctg: id });
-            if (id === this.state.ctg)
-                active = data['products']
+                this.state.ctg = id;
             if (id === this.state.ctg) {
+                active = data['products']
                 html = <DraggableItem key={id}> <li key={id} onClick={async () => {
                     if (this.state.ctg != id) {
-                        // if (this.pendingReload) {//Ensures that any fundamental changes on the backend are synced
                         this.props.reload();
-                        // }
                         this.setState({ ctg: id });
                     }
                 }} className="btn btn-success list-group-item">{type}</li></DraggableItem>;
             } else {
                 html = <DraggableItem key={id}> <li key={id} onClick={async () => {
                     if (this.state.ctg != id) {
-                        // if (this.pendingReload) {//Ensures that any fundamental changes on the backend are synced
                         this.props.reload();
-                        // }
                         this.setState({ ctg: id });
                     }
                 }} className="btn list-group-item">{type}</li></DraggableItem>;
             }
             category_inner.push(html);
-
         }
         if (cat_order == undefined)
-            for (const category in category) {
+            for (const category in categories) {
                 const data = categories[category];
                 const id = data['_id'];
                 const type = data['type'];
@@ -121,27 +136,25 @@ export default class AdminPage extends Component {
                 currency: "USD",
             }).format(data['price']);
             var img = data['image'];
-            items.push({ key: id, id: id, title: title, desc: desc, price: price, img: img, adminPage: true, swapMove: this.swapMove });
+            items.push({ key: id, id: id, title: title, desc: desc, price: price, img: img, adminPage: true, swapMove: this.swapMove, reload: this.props.reload, productsContainer: this.productsContainer, setToDelete: this.setDPend });
         }
-
-        // Items to components.
-
         const children = items.map((props) =>
-            <DraggableItem key={props.key} className="ms-5">
+            <DraggableItem key={props.key} style={{ marginLeft: '13px' }}>
                 <Product {...props} />
             </DraggableItem>
 
         );
-        const blank = <DraggableItem key='blankboi' className="ms-5">
-            <Product blank={true} />
+        const blank = <DraggableItem key='blankboi' style={{ marginLeft: '13px' }}>
+            <Product blank={true} key="blankboi" id="blankboi" ctg={this.state.ctg} title="SAMPLE TITLE" desc="SAMPLE DESCRIPTION" price="$0.00" img="/assets/default_img.png" setToDelete={this.setDPend} adminPage={true} swapMove={this.swapMove} reload={this.props.reload} productsContainer={this.productsContainer} />
         </DraggableItem>;
+
         const state = this.state;
         return (<div>
             <div className="row mt-5 text-center">
-                <div className="col-sm" style={{ maxWidth: '18rem', marginLeft: '60px' }}>
-                    <div className="mb-2" style={{ maxWidth: '18rem', marginLeft: '60px' }}>
+                <div className="col-sm" style={{ maxWidth: '25rem', marginLeft: '30px' }}>
+                    <div className="mb-2" style={{ maxWidth: '18rem', marginLeft: '30px' }}>
                         <ul className="list-group list-group-flush">
-                            <div id="categories-container" className="ms-1">
+                            <div id="categories-container">
                                 <DraggableGrid
                                     className="row"
                                     dragEnabled
@@ -195,15 +208,16 @@ export default class AdminPage extends Component {
                     </div>
                 </div>
                 <div className="col-sm">
-                    <div id="products-container" className="row-sm ms-1">
+                    <div id="products-container" className="row">
                         <DraggableGrid
+                            ref={this.productsContainer}
                             dragEnabled
                             dragFixed
                             dragSortPredicate={{
                                 action: "swap"
                             }}
                             dragStartPredicate={(item, event) => {
-                                return !this.blockMove.includes(this.getKey(item));
+                                return !this.state.blockMove.includes(this.getKey(item));
                             }}
                             dragSortHeuristics={{
                                 sortInterval: 0
@@ -232,7 +246,29 @@ export default class AdminPage extends Component {
                         </DraggableGrid>
                     </div>
                 </div>
-            </div></div >);
+            </div>
+            <div className="modal fade" id="alertModal" tabindex="-1" role="dialog" aria-labelledby="alertModalLabel" aria-hidden="true">
+                <div className="modal-dialog" role="document">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title" id="alertModalLabel">Confirmation</h5>
+                            <button ref={this.setModalRef} type="button" className="close" data-bs-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div className="modal-body">
+                            <p>Are you sure you want to delete this product?</p>
+                            <p>It will no longer be displayed under customers' purchases, and it is not recoverable.</p>
+                        </div>
+                        <div className="modal-footer">
+                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Dismiss</button>
+                            <button type="button" onClick={async (e) => { this.deleteProduct(this.state.deletePending) }} className="btn btn-danger">Delete Product</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div >
+        );
     }
 
 }
