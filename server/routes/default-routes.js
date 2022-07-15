@@ -3,6 +3,8 @@ import { ensureAdmin, ensureAuth } from "../config/auth.js";
 import express from 'express';
 import upload from '../config/upload.js';
 import openAi from '../config/openAi.js';
+import { validate } from '../config/error-mw.js';
+import { check, checkSchema } from 'express-validator';
 
 export default class Router {
     #router
@@ -13,10 +15,10 @@ export default class Router {
         router.get('/', controller.getIndex);
         router.get('/store-data', controller.getStoreData);
         /**OPENAI Prompt request */
-        router.post('/openai/prompt/', openAi);
+        router.post('/openai/prompt/', checkSchema({ message: { isString: true, toString: true } }), validate, validate, openAi);
         /**Shopping Cart */
-        router.post('/add-product', ensureAuth, controller.addToCart);
-        router.post('/remove-product', ensureAuth, controller.removeFromCart);
+        router.post('/add-product', ensureAuth, checkSchema({ id: { isString: true, toString: true } }), validate, controller.addToCart);
+        router.post('/remove-product', ensureAuth, checkSchema({ id: { isString: true, toString: true } }), validate, controller.removeFromCart);
 
         /**Login */
         router.post('/login', controller.login);
@@ -24,15 +26,15 @@ export default class Router {
 
         /**Modify Profile */
         router.post('/profile/image', ensureAuth, upload, controller.uploadImage)
-        router.post('/profile/modify', ensureAuth, controller.modifyProfile)
+        router.post('/profile/modify', ensureAuth, [check('vars').exists().isObject(), check('vars.*').isString().withMessage('Invalid Key Value')], validate, controller.modifyProfile)
 
         /**Register*/
-        router.post('/register', controller.register);
+        router.post('/register', [check('name').exists().isString(), check('password').exists().isString(), check('email').exists().isString()], validate, controller.register);
         router.get('/customer-data', controller.getCustomerData);
 
         /**Expects category id in post body*/
-        router.post('/category', controller.getCategory);
-        router.post('/category/products', controller.getProducts);
+        router.post('/category', checkSchema({ id: { isString: true, toString: true } }), validate, controller.getCategory);
+        router.post('/category/products', checkSchema({ id: { isString: true, toString: true, isUUID: true } }), validate, controller.getProducts);
 
         /**Paypal EndPoints */
         router.post('/api/orders', ensureAuth, controller.getOrders);
