@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Product from '../components/Product';
+import storeGen from '../utility/storeGen';
 
 export default class StorePage extends Component {
     constructor() {
@@ -7,53 +7,27 @@ export default class StorePage extends Component {
         this.state = { ctg: undefined };
     }
 
+    setCtg = async (id) => {
+        await this.setState({ ctg: id });
+    }
+
     render() {
-        let active = undefined;
         const categories = this.props.data.cstate;
-        let cat_order = categories[this.props.data.start].order;
-        if (cat_order.length <= 0) {
-            cat_order = undefined;
+        let cat_order = undefined;
+        if (this.props.data.start !== undefined) {
+            cat_order = categories[this.props.data.start].order;
+            if (cat_order.length <= 0) {
+                cat_order = undefined;
+            }
         }
         const products = this.props.data.pstate;
-        let category_inner = [];
-        let products_inner = [];
-        let populate = (data, id, type) => {
-            if (this.state.ctg == undefined)
-                this.state.ctg = id;
-            if (id === this.state.ctg)
-                active = data['products']
-            category_inner.push(<li key={id} onClick={() => { this.setState({ ctg: id }) }} className="btn list-group-item">{type}</li>);
-        }
-        if (cat_order == undefined)
-            for (const category in categories) {
-                const data = categories[category];
-                const id = data['_id'];
-                const type = data['type'];
-                populate(data, id, type);
-            }
-        else
-            for (const i in cat_order) {
-                const category = cat_order[i];
-                const data = categories[category];
-                const id = data['_id'];
-                const type = data['type'];
-                populate(data, id, type)
-            }
-        for (const index in active) {
-            let product = active[index];
-            if (product == null)
-                continue;
-            let data = products[product];
-            var id = data['_id'];
-            var title = data['title'];
-            var desc = data['des'];
-            var price = Intl.NumberFormat("en-US", {
-                style: "currency",
-                currency: "USD",
-            }).format(data['price']);
-            var img = data['image'];
-            products_inner.push(<Product modal={this.props.modal} key={id} reload={this.props.reload} id={id} title={title} desc={desc} price={price} img={img} />);
-        }
+        let results = storeGen(this.state.ctg, cat_order, categories, products, this.props.modal, this.props.reload, this.setCtg);
+        let products_inner = results[0];
+        let category_inner = results[1];
+        let ctg = results[2];
+
+        if (this.state.ctg !== ctg)
+            this.state.ctg = ctg
 
         let html = <div><div className="row mt-5 text-center">
             <div className="col-sm" style={{ maxWidth: '25rem', marginLeft: '30px' }}>

@@ -435,6 +435,7 @@ export default class Controller {
             {},
             { $pull: { products: { $in: [prodID] } } }
         )
+        await Customer.updateMany({}, { $pull: { purchases: { _id: prodID }, purchase_quantities: { _id: prodID.toString() } } })
         await Product.deleteMany(
             { _id: prodID }
         )

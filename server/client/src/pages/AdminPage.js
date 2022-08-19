@@ -147,6 +147,9 @@ export default class AdminPage extends Component {
         const blank = <DraggableItem key='blankboi' style={{ marginLeft: '13px' }}>
             <Product blank={true} key="blankboi" id="blankboi" ctg={this.state.ctg} title="SAMPLE TITLE" desc="SAMPLE DESCRIPTION" price="$0.00" img="/assets/default_img.png" setToDelete={this.setDPend} adminPage={true} swapMove={this.swapMove} reload={this.props.reload} productsContainer={this.productsContainer} />
         </DraggableItem>;
+        const newctg =
+            <li className="btn list-group-item">Create New Category</li>
+            ;
 
         const state = this.state;
         return (<div>
@@ -187,13 +190,11 @@ export default class AdminPage extends Component {
                                         if (event.distance > 0) {
                                             const grid = await item.getGrid();
                                             const items = await grid.getItems();
-                                            console.log(event);
                                             const keys = [];
                                             for (let i in items) {
                                                 item = items[i];
                                                 for (let key in item.getElement()) {
                                                     let value = item.getElement()[key];
-                                                    //console.log(item.getElement());
                                                     if (key.includes('__reactProps$'))
                                                         keys.push(value.children.props.children[1].key);
                                                 }
@@ -203,6 +204,7 @@ export default class AdminPage extends Component {
                                     }}>
                                     {category_inner}
                                 </DraggableGrid>
+                                {newctg}
                             </div>
                         </ul>
                     </div>

@@ -137,7 +137,8 @@ export default class Product extends Component {
         this.setState({ formData: formData });
     }
     resize = () => {
-        this.props.productsContainer.current.grid._resizeHandler();
+        if (this.state.adminPage)
+            this.props.productsContainer.current.grid._resizeHandler();
     }
 
     render() {

@@ -33,6 +33,8 @@ export default class SuccessPage extends Component {
         for (const purchase of purchases) {
             const product = product_ids[purchase];
             const quantity = purchase_quntities[purchase];
+            if (product === undefined)
+                continue;
             purchase_list.push(<p>{product.title} - ${product.price} x {quantity}</p>)
         }
 
